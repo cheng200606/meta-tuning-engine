@@ -17,7 +17,8 @@
 | Python 分析环境 | ✅ | uv 0.12.10 + Python 3.11.16；pandas/scipy/sklearn/matplotlib 导入通过；阿里云 PyPI 镜像 + --native-tls |
 | API 密钥 | ✅ 用户已填 .env（2026-11-10） | 三基座连通验证通过；llama-3.3-70b 被硅基流动下线，按预案替换为 glm-4.5-air（协议 §10 记录） |
 | G0 协议冻结 | ✅ 组长程夏 2026-11-10 签字 | v1.0-已冻结；冒烟 20 episode 通过（16/20，失败为真实任务失败）；预算核对通过 |
-| G0 全量实验 | ✅ 2026-11-11 02:47 完成 | 648 episode；**C1（3/3 基座 gap≥10pp）+ C2（delta=7.3pp）通过 → PASS 进 M2**；infra_error 62 例留痕（qwen 429 限流）；费用 ≈¥37（上界单价）＜¥150 上限；判据经独立重算复核与 report.json 一致；决议 docs/g0-decision.md 待组长签署（Qwen 缺失数据修复 A/B/C 待决策） |
+| G0 全量实验 | ✅ 2026-11-11 02:47 完成 | 648 episode；C1+C2 通过（原口径 delta=7.3pp）；infra_error 62 例留痕（qwen 429 限流）；判据经独立重算复核与 report.json 一致 |
+| G0 infra 修复跑 | ✅ 2026-11-11 06:05 完成 | 62/62 回收（qwen 56 + glm 6），0 例仍失败；产物独立文件（repair-episodes.jsonl / repair-report.json），原数据未改动；合并口径每格 n=24 满格，C1+C2 仍通过（delta=5.6pp，qwen 最优移至 step_by_step-p1）；修复消耗 1.02M tokens（≈¥14），总计 3.80M ≈¥51＜¥150 上限；决议 docs/g0-decision.md 待组长签字 |
 
 ## 本机网络要点（实测）
 
