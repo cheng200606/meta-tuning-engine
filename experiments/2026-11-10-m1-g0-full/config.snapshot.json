@@ -1,0 +1,55 @@
+{
+  "protocol": "g0-protocol.md v1.0",
+  "mode": "full",
+  "manifestHash": "43059cb4d2e5be37dd83553bd9ecbddd0bc4dd3a0ec43944c21cc89b6fea1004",
+  "commit": "55929f463262487ec956ce7af64ec7fc437141e8",
+  "bases": [
+    {
+      "id": "deepseek-v3",
+      "model": "deepseek-chat",
+      "base_url": "https://api.deepseek.com/v1"
+    },
+    {
+      "id": "qwen3-8b",
+      "model": "Qwen/Qwen3-8B",
+      "base_url": "https://api.siliconflow.cn/v1"
+    },
+    {
+      "id": "glm-4.5-air",
+      "model": "zai-org/GLM-4.5-Air",
+      "base_url": "https://api.siliconflow.cn/v1"
+    }
+  ],
+  "configs": [
+    "concise-p1-roff",
+    "concise-p2-roff",
+    "concise-p3-roff",
+    "step_by_step-p1-roff",
+    "step_by_step-p2-roff",
+    "step_by_step-p3-roff",
+    "constrained-p1-roff",
+    "constrained-p2-roff",
+    "constrained-p3-roff"
+  ],
+  "tasks": [
+    "g0-tool-01",
+    "g0-tool-02",
+    "g0-tool-03",
+    "g0-tool-04",
+    "g0-reas-01",
+    "g0-reas-02",
+    "g0-reas-03",
+    "g0-reas-04",
+    "g0-code-01",
+    "g0-code-02",
+    "g0-code-03",
+    "g0-code-04"
+  ],
+  "seeds": [
+    0,
+    1
+  ],
+  "temperature": 0,
+  "maxSteps": 10,
+  "concurrency": 2
+}

@@ -1,0 +1,492 @@
+{
+  "mode": "full",
+  "date": "2026-11-10T18:46:59.052Z",
+  "episodes": 648,
+  "infraFailures": [
+    {
+      "task": "g0-reas-02",
+      "base": "qwen3-8b",
+      "config": "concise-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-02",
+      "base": "qwen3-8b",
+      "config": "concise-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-03",
+      "base": "qwen3-8b",
+      "config": "concise-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "concise-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "concise-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "concise-p1-roff",
+      "seed": 0,
+      "reason": "infra: network failure after 4 attempts: TypeError: fetch failed"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "concise-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-04",
+      "base": "qwen3-8b",
+      "config": "concise-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "concise-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "concise-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "concise-p2-roff",
+      "seed": 1,
+      "reason": "infra: network failure after 4 attempts: TypeError: fetch failed"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "concise-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-03",
+      "base": "qwen3-8b",
+      "config": "concise-p3-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "concise-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-02",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-02",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-02",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-02",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-03",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-02",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-02",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-03",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-03",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-04",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-01",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-02",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-reas-02",
+      "base": "qwen3-8b",
+      "config": "constrained-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "qwen3-8b",
+      "config": "constrained-p2-roff",
+      "seed": 0,
+      "reason": "infra: network failure after 4 attempts: TypeError: fetch failed"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "glm-4.5-air",
+      "config": "step_by_step-p2-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "glm-4.5-air",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-01",
+      "base": "glm-4.5-air",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "glm-4.5-air",
+      "config": "step_by_step-p3-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-tool-01",
+      "base": "glm-4.5-air",
+      "config": "constrained-p1-roff",
+      "seed": 1,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    },
+    {
+      "task": "g0-code-04",
+      "base": "glm-4.5-air",
+      "config": "step_by_step-p3-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    }
+  ],
+  "matrix": {
+    "deepseek-v3": {
+      "concise-p1-roff": 0.5833333333333334,
+      "concise-p2-roff": 0.5833333333333334,
+      "concise-p3-roff": 0.6666666666666666,
+      "step_by_step-p1-roff": 0.6666666666666666,
+      "step_by_step-p2-roff": 0.7916666666666666,
+      "step_by_step-p3-roff": 0.8333333333333334,
+      "constrained-p1-roff": 0.6666666666666666,
+      "constrained-p2-roff": 0.6666666666666666,
+      "constrained-p3-roff": 0.7916666666666666
+    },
+    "qwen3-8b": {
+      "concise-p1-roff": 0.45,
+      "concise-p2-roff": 0.35294117647058826,
+      "concise-p3-roff": 0.38095238095238093,
+      "step_by_step-p1-roff": 0.5384615384615384,
+      "step_by_step-p2-roff": 0.6363636363636364,
+      "step_by_step-p3-roff": 0.5294117647058824,
+      "constrained-p1-roff": 0.42857142857142855,
+      "constrained-p2-roff": 0.30434782608695654,
+      "constrained-p3-roff": 0.3333333333333333
+    },
+    "glm-4.5-air": {
+      "concise-p1-roff": 0.9166666666666666,
+      "concise-p2-roff": 0.9166666666666666,
+      "concise-p3-roff": 0.9166666666666666,
+      "step_by_step-p1-roff": 0.75,
+      "step_by_step-p2-roff": 0.7391304347826086,
+      "step_by_step-p3-roff": 0.75,
+      "constrained-p1-roff": 0.9130434782608695,
+      "constrained-p2-roff": 0.875,
+      "constrained-p3-roff": 0.875
+    }
+  },
+  "gaps": {
+    "deepseek-v3": 0.25,
+    "qwen3-8b": 0.3320158102766798,
+    "glm-4.5-air": 0.17753623188405798
+  },
+  "perModelBest": {
+    "deepseek-v3": "step_by_step-p3-roff",
+    "qwen3-8b": "step_by_step-p2-roff",
+    "glm-4.5-air": "concise-p1-roff"
+  },
+  "cGlobal": "step_by_step-p2-roff",
+  "delta": 0.07306763285024154,
+  "C1": true,
+  "C2": true,
+  "decision": "PASS -> M2",
+  "tokens": 2785727
+}
