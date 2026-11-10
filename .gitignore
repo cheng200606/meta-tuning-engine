@@ -1,0 +1,8 @@
+node_modules/
+dist/
+vendor/
+.env
+*.log
+experiments/**/traces/
+__pycache__/
+.venv/

@@ -1,0 +1,14 @@
+# 基座 × 维度可用性矩阵（开发实验方案 §7 / M0 spike 第 5 项）
+# null = 未确认。全量 G0 运行前必须全部填为 true/false（实测，不得猜）。
+# parallel_tool_calls：模型/API 是否支持单轮多个 tool call
+# reasoning_effort：API 是否暴露 reasoning/effort 档位
+bases:
+  deepseek-v3:
+    parallel_tool_calls: null
+    reasoning_effort: null
+  qwen3-8b:
+    parallel_tool_calls: null
+    reasoning_effort: null
+  llama-3.3-70b:
+    parallel_tool_calls: null
+    reasoning_effort: null

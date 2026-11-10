@@ -1,0 +1,5 @@
+# M2 加载示例（格式以 docs/dsh-spike.md 确认结果为准）
+# 用法：复制到 DSH 运行目录，改为绝对路径，然后
+#   pnpm dsh web --patch ./cordis.yml
+plugins:
+  - D:/path/to/meta-tuning-engine/packages/plugin-meta-controller

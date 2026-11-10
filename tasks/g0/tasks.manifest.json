@@ -1,0 +1,103 @@
+{
+  "version": "1.0",
+  "frozen_in": "docs/g0-protocol.md",
+  "note": "任务指令为最终措辞，冻结后不得修改；fixtures 由 tasks/g0/env 在每 episode 开始时重置；checker 实现于 tasks/g0/checks/<id>.ts，必须满足 expected 描述。",
+  "tasks": [
+    {
+      "id": "g0-tool-01",
+      "category": "tool",
+      "instruction": "读取 sales.csv 的内容，使用 calculate 工具计算销售额总和，将结果（纯数字，不带单位）写入 result.txt。",
+      "fixtures": ["sales.csv（五行销售额：100,200,300,400,500）"],
+      "tools_expected": ["read_file", "calculate", "write_file"],
+      "expected": "result.txt 内容等于 1500"
+    },
+    {
+      "id": "g0-tool-02",
+      "category": "tool",
+      "instruction": "查询北京今天的天气。如果气温低于 10℃，向 coat.txt 写入 yes，否则写入 no。",
+      "fixtures": ["天气表：北京今日 5℃"],
+      "tools_expected": ["get_weather", "write_file"],
+      "expected": "coat.txt 内容等于 yes"
+    },
+    {
+      "id": "g0-tool-03",
+      "category": "tool",
+      "instruction": "列出当前目录下的文件，找到唯一的 .json 文件并读取它，回答其中 order_id 字段的值。",
+      "fixtures": ["orders.json：{\"order_id\": \"ORD-2026-0042\"}", "若干干扰文件"],
+      "tools_expected": ["list_dir", "read_file"],
+      "expected": "最终答案包含 ORD-2026-0042"
+    },
+    {
+      "id": "g0-tool-04",
+      "category": "tool",
+      "instruction": "使用 calculate 工具将华氏 98.6 度转换为摄氏度，保留一位小数，直接回答数字。",
+      "fixtures": [],
+      "tools_expected": ["calculate"],
+      "expected": "最终答案等于 37.0（接受 37）"
+    },
+    {
+      "id": "g0-reas-01",
+      "category": "reasoning",
+      "instruction": "查询上海和杭州的人口，计算两者差值，回答人口较多的城市名和差值。",
+      "fixtures": ["城市表：上海 24870000，杭州 12520000"],
+      "tools_expected": ["get_city_info", "get_city_info", "calculate"],
+      "expected": "答案包含 上海 与 12350000（接受 1235万）"
+    },
+    {
+      "id": "g0-reas-02",
+      "category": "reasoning",
+      "instruction": "查询客户 C001 的全部订单并计算总额。如果总额达到 1000 元（含），回答 yes，否则回答 no。",
+      "fixtures": ["订单表：C001 三笔 300,450,300"],
+      "tools_expected": ["query_orders", "calculate"],
+      "expected": "最终答案为 yes（总额 1050）"
+    },
+    {
+      "id": "g0-reas-03",
+      "category": "reasoning",
+      "instruction": "查询北京、上海、广州今天的天气，回答其中气温最高的城市名。",
+      "fixtures": ["天气表：北京 5℃，上海 12℃，广州 24℃"],
+      "tools_expected": ["get_weather", "get_weather", "get_weather"],
+      "expected": "最终答案包含 广州"
+    },
+    {
+      "id": "g0-reas-04",
+      "category": "reasoning",
+      "instruction": "读取 rules.txt 中的计算规则，按规则依次计算 a、b、c，将 c 的值（纯数字）写入 result.txt。",
+      "fixtures": ["rules.txt：a=3; b=a*4; c=b+5"],
+      "tools_expected": ["read_file", "calculate"],
+      "expected": "result.txt 内容等于 17"
+    },
+    {
+      "id": "g0-code-01",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 twoSum(nums, target)，返回和为 target 的两个元素的下标数组（任意一组有效解）。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file"],
+      "expected": "run_js 加载 solution.js 后 3 组断言全过：([2,7,11,15],9)→含[0,1]；([3,2,4],6)→含[1,2]；([3,3],6)→含[0,1]"
+    },
+    {
+      "id": "g0-code-02",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 isPalindrome(s)，判断字符串是否为回文（区分大小写，空串视为回文）。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file"],
+      "expected": "4 组断言全过：'level'→true；'hello'→false；''→true；'a'→true"
+    },
+    {
+      "id": "g0-code-03",
+      "category": "code",
+      "instruction": "bug_sort.js 中的冒泡排序有一个 off-by-one 错误。修复它，将修复后的完整函数代码写入 solution.js。",
+      "fixtures": ["bug_sort.js（内层循环边界少一轮）"],
+      "tools_expected": ["read_file", "write_file"],
+      "expected": "3 组断言全过：[5,3,8,1]→[1,3,5,8]；[2,2,1]→[1,2,2]；[]→[]"
+    },
+    {
+      "id": "g0-code-04",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 parseCsvLine(line)，将一行 CSV 解析为字段数组，正确处理双引号包裹且内含逗号的字段。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file"],
+      "expected": "2 组断言全过：'a,b,c'→['a','b','c']；'a,\"b,c\",d'→['a','b,c','d']"
+    }
+  ]
+}

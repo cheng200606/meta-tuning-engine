@@ -1,0 +1,19 @@
+# G0 基座清单
+# M0 验证连通后确认 model 字段的确切模型名（聚合平台命名可能不同）。
+# 密钥只放 .env，此处只引用环境变量名。
+bases:
+  - id: deepseek-v3
+    model: deepseek-chat
+    base_url: https://api.deepseek.com/v1
+    api_key_env: DEEPSEEK_API_KEY
+    role: g0
+  - id: qwen3-8b
+    model: Qwen/Qwen3-8B          # M0 以聚合平台实际模型名为准
+    base_url: https://api.siliconflow.cn/v1
+    api_key_env: SILICONFLOW_API_KEY
+    role: g0
+  - id: llama-3.3-70b
+    model: meta-llama/Llama-3.3-70B-Instruct   # M0 同上；若冒烟后超预算，换 Qwen3-32B
+    base_url: https://api.siliconflow.cn/v1
+    api_key_env: SILICONFLOW_API_KEY
+    role: g0
