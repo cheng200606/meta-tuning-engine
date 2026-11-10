@@ -12,8 +12,8 @@ bases:
     base_url: https://api.siliconflow.cn/v1
     api_key_env: SILICONFLOW_API_KEY
     role: g0
-  - id: llama-3.3-70b
-    model: meta-llama/Llama-3.3-70B-Instruct   # M0 同上；若冒烟后超预算，换 Qwen3-32B
+  - id: glm-4.5-air
+    model: zai-org/GLM-4.5-Air   # 2026-11-10 替换 llama-3.3-70b：硅基流动已下线 Llama 全系（Model disabled），改用智谱保持厂商多样性
     base_url: https://api.siliconflow.cn/v1
     api_key_env: SILICONFLOW_API_KEY
     role: g0

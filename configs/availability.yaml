@@ -1,14 +1,14 @@
 # 基座 × 维度可用性矩阵（开发实验方案 §7 / M0 spike 第 5 项）
-# null = 未确认。全量 G0 运行前必须全部填为 true/false（实测，不得猜）。
-# parallel_tool_calls：模型/API 是否支持单轮多个 tool call
-# reasoning_effort：API 是否暴露 reasoning/effort 档位
+# 2026-11-10 实测填写，证据：docs/spike/availability-probe-report.json（scripts/probe-bases.ts）
+# parallel_tool_calls：模型单响应发出 2 个 tool call 且 API 接受
+# reasoning_effort：带 reasoning_effort=low 的请求被 API 正常接受
 bases:
   deepseek-v3:
-    parallel_tool_calls: null
-    reasoning_effort: null
+    parallel_tool_calls: true
+    reasoning_effort: true
   qwen3-8b:
-    parallel_tool_calls: null
-    reasoning_effort: null
-  llama-3.3-70b:
-    parallel_tool_calls: null
-    reasoning_effort: null
+    parallel_tool_calls: true
+    reasoning_effort: true
+  glm-4.5-air:
+    parallel_tool_calls: true
+    reasoning_effort: true

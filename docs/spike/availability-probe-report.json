@@ -1,0 +1,54 @@
+{
+  "date": "2026-11-10T15:41:09.164Z",
+  "note": "null = 需人工复探；审阅后手工填 configs/availability.yaml",
+  "results": [
+    {
+      "base": "deepseek-v3",
+      "model": "deepseek-chat",
+      "connectivity": {
+        "ok": true,
+        "detail": "HTTP 200"
+      },
+      "parallel_tool_calls": {
+        "supported": true,
+        "detail": "tool_calls in one response: 2"
+      },
+      "reasoning_effort": {
+        "supported": true,
+        "detail": "HTTP 200 with reasoning_effort=low"
+      }
+    },
+    {
+      "base": "qwen3-8b",
+      "model": "Qwen/Qwen3-8B",
+      "connectivity": {
+        "ok": true,
+        "detail": "HTTP 200"
+      },
+      "parallel_tool_calls": {
+        "supported": true,
+        "detail": "tool_calls in one response: 2"
+      },
+      "reasoning_effort": {
+        "supported": true,
+        "detail": "HTTP 200 with reasoning_effort=low"
+      }
+    },
+    {
+      "base": "glm-4.5-air",
+      "model": "zai-org/GLM-4.5-Air",
+      "connectivity": {
+        "ok": true,
+        "detail": "HTTP 200"
+      },
+      "parallel_tool_calls": {
+        "supported": true,
+        "detail": "tool_calls in one response: 2"
+      },
+      "reasoning_effort": {
+        "supported": true,
+        "detail": "HTTP 200 with reasoning_effort=low"
+      }
+    }
+  ]
+}

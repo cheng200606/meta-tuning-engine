@@ -15,8 +15,8 @@
 | 静态 preset 验证 | ✅ 无密钥 mock 通过 | scripts/verify-presets.ts：注册→agent/created select→persona 进入模型请求；关键限制见 dsh-spike.md（headless 不组合 preset、preset 内禁放 agent-loop） |
 | Ollama | ❌ 已取消（用户决定 2026-11-10） | 修订架构 G0–M3 不需要小模型；Ollama 仅可选 M5 前置，届时再议（M5 也可能被 kNN 基线替代） |
 | Python 分析环境 | ✅ | uv 0.12.10 + Python 3.11.16；pandas/scipy/sklearn/matplotlib 导入通过；阿里云 PyPI 镜像 + --native-tls |
-| API 密钥 | ⬜ 用户未提供（已确认跳过） | .env 未创建；阻塞：连通验证、可用性矩阵、G0 运行 |
-| G0 协议冻结 | ⬜ 待组长签字 | docs/g0-protocol.md 第 9 节 |
+| API 密钥 | ✅ 用户已填 .env（2026-11-10） | 三基座连通验证通过；llama-3.3-70b 被硅基流动下线，按预案替换为 glm-4.5-air（协议 §10 记录） |
+| G0 协议冻结 | ✅ 组长程夏 2026-11-10 签字 | v1.0-已冻结；冒烟 20 episode 通过（16/20，失败为真实任务失败）；预算核对通过；全量 648 episode 运行中 |
 
 ## 本机网络要点（实测）
 

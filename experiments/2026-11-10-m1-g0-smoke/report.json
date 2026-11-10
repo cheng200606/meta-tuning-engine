@@ -1,0 +1,24 @@
+{
+  "mode": "smoke",
+  "date": "2026-11-10T15:43:24.307Z",
+  "episodes": 20,
+  "infraFailures": [],
+  "matrix": {
+    "deepseek-v3": {
+      "concise-p1-roff": 0.8,
+      "step_by_step-p3-roff": 0.8
+    }
+  },
+  "gaps": {
+    "deepseek-v3": 0
+  },
+  "perModelBest": {
+    "deepseek-v3": "concise-p1-roff"
+  },
+  "cGlobal": "concise-p1-roff",
+  "delta": 0,
+  "C1": false,
+  "C2": false,
+  "decision": "smoke-only (no decision)",
+  "tokens": 49567
+}
