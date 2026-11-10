@@ -34,6 +34,7 @@ pnpm test         # vitest（action-space + runner + G0 判定器自测）
 pnpm typecheck    # 需先 build（workspace 依赖走 dist）
 
 # G0 实验（需 .env 密钥 + 协议签字冻结 + availability 实测填写）
+node --env-file=.env --import tsx/esm scripts/probe-bases.ts      # 连通验证 + 可用性矩阵探测
 node --env-file=.env --import tsx/esm scripts/run-g0.ts --smoke   # 20 episode 冒烟
 node --env-file=.env --import tsx/esm scripts/run-g0.ts --full    # 648 episode 门禁实验
 
