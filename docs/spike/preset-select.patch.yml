@@ -1,0 +1,4 @@
+# M0 验证：挂载 select 原型插件（绝对路径按本机调整，或用相对 cordis 解析）
+- insert:
+    - id: meta-verify-select
+      name: D:/ProfessionalSoftware/Project/元调优引擎/meta-tuning-engine/docs/spike/meta-verify-select.ts

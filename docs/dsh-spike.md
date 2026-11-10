@@ -34,8 +34,15 @@
 - 对 configs/bases.yaml 三个基座各发一次探测请求（双 tool call 请求 / reasoning_effort 参数），填 configs/availability.yaml：
 - 结论与请求记录：待 DEEPSEEK_API_KEY / SILICONFLOW_API_KEY 就绪后执行。
 
-## 静态 preset 验证（M0 出口）
-- [ ] 两个静态 preset（不同 system prompt + 不同 maxParallelToolCalls）经 cordis.yml --patch 加载
-- [ ] Web UI 切换后行为差异可观测（记录截图/trace）
-- 阻塞：DSH 构建进行中；真实模型行为差异需要 API 密钥。
-- **无密钥替代验证（已确认可行）**：DSH 自带 mock LLM 服务器（`pnpm run mock:llm -- --sequence success --repeat-last --port 8000`，packages/test-support/llm-mock-server），会话适配器读 `DEEPSEEK_BASE_URL`/`DEEPSEEK_API_KEY` 环境变量（packages/boot/app-boot/src/index.ts:150）。设 `DEEPSEEK_BASE_URL=http://127.0.0.1:8000` + 任意占位 key，即可 headless 跑通并验证：preset 注册/挂载成功、select 事件入 session 日志、persona 文本进入模型请求（mock 服务器可打印请求）。模型输出行为差异仍需真实密钥，留待密钥就绪。
+## 静态 preset 验证（M0 出口）—— 已通过（2026-11-10，无密钥 mock 验证）
+- [x] 两个静态 preset 经 --patch 加载（headless profile 需额外插入 agent-preset-registry，见 preset-registry.patch.yml）
+- [x] agent/created 时 select → persona 进入模型请求（scripts/verify-presets.ts，报告 docs/spike/verify-presets-report.json：defaultPresetPersonaInjected=true，0 pending warnings）
+- [ ] Web UI 真实模型下的行为差异截图（待 API 密钥；机制已由 mock 验证）
+
+### 验证中发现的关键工程事实（M2/M1 必须遵守）
+1. **headless 一次性 runner 不组合 preset**（packages/bundle/headless/src/index.ts:223-232 甚至拒绝 adopt 带 preset 的会话）→ **G0 评测不能用 `dsh headless` 驱动 preset 配置**；M1 评测通道改为：a) 自研 runner（现方案）b) Web/SDK 通道驱动 DSH。原「headless 为主」倾向作废。
+2. **preset 内不得放 agent-loop**：与根部 agentLoop 服务冲突（service already registered）；官方 preset 只含 persona/工具/compaction 等，循环留在根组合。maxParallelToolCalls 用根部配置覆盖行（`- id: agent-loop\n  config:`）或 agent-loop 的 per-agent `agents` 配置（M2 细化）。
+3. **select 时机**：`agent/created` 事件（packages/core/agent/src/runtime-types.ts:290）内调用可行且通过验证；docs/spike/meta-verify-select.ts 即 M2 元控制器最小原型。
+4. launcher 旗标顺序：`dsh --patch x.yml --profile headless "task"`（--patch 在 profile 前）；headless app 自身不认 --patch。
+5. mock LLM 直启：`node --import tsx/esm packages/test-support/llm-mock-server/src/bin.ts --sequence success --repeat-last --port 8000`（pnpm run mock:llm 的 `--` 转发会丢参数）；编程接口 startMockLlmServer 保留完整请求体（验证脚本用法）。
+6. 会话日志为 zstd 压缩（session.v4.jsonl.zstd），Node 24 zlib.zstdDecompressSync 可读；headless 短会话可能只刷 header，请求体快照在模型请求的 dsh_session_log 字段内。

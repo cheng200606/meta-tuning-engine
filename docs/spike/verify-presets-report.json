@@ -1,0 +1,10 @@
+{
+  "date": "2026-11-10T15:06:29.580Z",
+  "headlessExit": 0,
+  "requests": 2,
+  "defaultPresetPersonaInjected": true,
+  "secondPresetPersonaObserved": false,
+  "pendingWarnings": false,
+  "stdout": "MOCK_OK\n",
+  "stderr": ""
+}

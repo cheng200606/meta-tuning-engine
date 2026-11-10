@@ -1,0 +1,8 @@
+# M0 静态 preset 验证：headless profile 不自带 preset registry，需显式插入
+# 依据：vendor/deepseek-harness/packages/bundle/web-app/cordis.patch.yml:597-601
+# 用法：pnpm dsh --patch preset-registry.patch.yml --patch preset-a.patch.yml --patch preset-b.patch.yml --profile headless "task"
+- insert:
+    - id: agent-preset-registry
+      name: '@deepseek-ai/dsh-agent-preset-registry'
+      config:
+        default: meta-a
