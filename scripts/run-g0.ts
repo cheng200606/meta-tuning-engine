@@ -1,7 +1,8 @@
 // G0 门禁实验流水线（协议：docs/g0-protocol.md v1.0）
-// 运行：node --env-file=.env --import tsx/esm scripts/run-g0.ts --smoke | --full
+// 运行：node --env-file=.env --import tsx/esm scripts/run-g0.ts --smoke | --full | --plumbing
 // --smoke：deepseek-v3 × 2 配置 × 前 5 任务 × 2 seed = 20 episode（协议 §4.1）
 // --full：3 基座 × 9 配置 × 12 任务 × 2 seed = 648 episode；要求 availability 全部实测填写
+// --plumbing：本地假端点（scripts/plumbing-mock.ts）验证实验机器，非 G0 实验，不受冻结门禁约束
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
@@ -15,9 +16,9 @@ import { fixturesByTask } from '../tasks/g0/env/fixtures.ts'
 import { checkers } from '../tasks/g0/checks/index.ts'
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
-const mode = process.argv.includes('--full') ? 'full' : process.argv.includes('--smoke') ? 'smoke' : null
+const mode = process.argv.includes('--full') ? 'full' : process.argv.includes('--smoke') ? 'smoke' : process.argv.includes('--plumbing') ? 'plumbing' : null
 if (mode === null) {
-  console.error('usage: run-g0.ts --smoke | --full')
+  console.error('usage: run-g0.ts --smoke | --full | --plumbing')
   process.exit(1)
 }
 
@@ -39,10 +40,11 @@ if (!protocol.includes('已冻结') && mode === 'full') {
 
 const g0Availability: Availability = { parallel_tool_calls: true, reasoning_effort: false }
 const allConfigs = enumerateConfigs(g0Availability)
-const runBases = mode === 'smoke' ? bases.filter((b) => b.id === 'deepseek-v3') : bases
-const runConfigs = mode === 'smoke' ? allConfigs.filter((c) => ['concise-p1-roff', 'step_by_step-p3-roff'].includes(configId(c))) : allConfigs
-const runTasks = mode === 'smoke' ? manifest.tasks.slice(0, 5) : manifest.tasks
-const seeds = [0, 1]
+const plumbingBase: BaseConfig = { id: 'plumbing-fake', model: 'fake', base_url: 'http://127.0.0.1:8123', api_key_env: 'PLUMBING_KEY' }
+const runBases = mode === 'plumbing' ? [plumbingBase] : mode === 'smoke' ? bases.filter((b) => b.id === 'deepseek-v3') : bases
+const runConfigs = mode === 'plumbing' ? allConfigs.slice(0, 2) : mode === 'smoke' ? allConfigs.filter((c) => ['concise-p1-roff', 'step_by_step-p3-roff'].includes(configId(c))) : allConfigs
+const runTasks = mode === 'plumbing' ? manifest.tasks.slice(0, 3) : mode === 'smoke' ? manifest.tasks.slice(0, 5) : manifest.tasks
+const seeds = mode === 'plumbing' ? [0] : [0, 1]
 
 if (mode === 'full') {
   for (const base of runBases) {
@@ -82,7 +84,7 @@ let done = 0
 async function worker(): Promise<void> {
   while (cursor < jobs.length) {
     const job = jobs[cursor++]
-    const apiKey = process.env[job.base.api_key_env]
+    const apiKey = process.env[job.base.api_key_env] ?? (mode === 'plumbing' ? 'plumbing' : undefined)
     if (!apiKey) throw new Error(`missing env ${job.base.api_key_env}`)
     const ctx = {
       baseId: job.base.id, baseUrl: job.base.base_url, apiKey, model: job.base.model,
@@ -140,7 +142,7 @@ const report = {
   mode, date: new Date().toISOString(), episodes: records.length,
   infraFailures: infraFailures.map((f) => ({ task: f.job.task.id, base: f.job.base.id, config: configId(f.job.config), seed: f.job.seed, reason: f.reason })),
   matrix, gaps, perModelBest, cGlobal, delta, C1: c1, C2: c2,
-  decision: mode === 'full' ? (c1 && c2 ? 'PASS -> M2' : c1 ? 'DOWNGRADE (C1 only)' : 'STOP') : 'smoke-only (no decision)',
+  decision: mode === 'full' ? (c1 && c2 ? 'PASS -> M2' : c1 ? 'DOWNGRADE (C1 only)' : 'STOP') : `${mode}-only (no decision)`,
   tokens: records.reduce((s, x) => s + x.prompt_tokens + x.completion_tokens, 0),
 }
 writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 2))

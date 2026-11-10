@@ -13,7 +13,7 @@
 | DSH 依赖安装 | ✅ | pnpm 11.28.5（corepack），显式 https-proxy=127.0.0.1:7892 + NODE_OPTIONS=--use-system-ca 后成功（sheetjs CDN 需代理） |
 | DSH 构建 | ✅ | build:artifacts：8 gates passed，367 client artifacts，143s |
 | 静态 preset 验证 | ✅ 无密钥 mock 通过 | scripts/verify-presets.ts：注册→agent/created select→persona 进入模型请求；关键限制见 dsh-spike.md（headless 不组合 preset、preset 内禁放 agent-loop） |
-| Ollama | ⏳ 安装包下载中（官方源慢） | 装后 `ollama pull qwen2.5:1.5b`（M5 前置，非 G0 阻塞） |
+| Ollama | ❌ 已取消（用户决定 2026-11-10） | 修订架构 G0–M3 不需要小模型；Ollama 仅可选 M5 前置，届时再议（M5 也可能被 kNN 基线替代） |
 | Python 分析环境 | ✅ | uv 0.12.10 + Python 3.11.16；pandas/scipy/sklearn/matplotlib 导入通过；阿里云 PyPI 镜像 + --native-tls |
 | API 密钥 | ⬜ 用户未提供（已确认跳过） | .env 未创建；阻塞：连通验证、可用性矩阵、G0 运行 |
 | G0 协议冻结 | ⬜ 待组长签字 | docs/g0-protocol.md 第 9 节 |
