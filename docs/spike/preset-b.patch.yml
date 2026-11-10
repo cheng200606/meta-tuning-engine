@@ -1,0 +1,21 @@
+# M0 静态 preset 验证 B：分步 persona + 并行工具调用
+# 用法（DSH 构建完成后）：pnpm dsh web --patch ../../docs/spike/preset-b.patch.yml
+# 与 A 的差异仅 persona.prefix 与 maxParallelToolCalls，用于验证切换后行为可观测变化
+- insert:
+    - id: preset-meta-b
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: meta-b
+        name: Meta B (step-by-step, parallel)
+        order: 91
+        plugins:
+          - id: persona
+            name: '@deepseek-ai/dsh-persona'
+            config:
+              prefix: You are a step-by-step reasoning assistant. Decompose the task into steps, then execute them one by one.
+              complete: true
+              includeRuntimeContext: false
+          - id: agent-loop
+            name: '@deepseek-ai/dsh-agent-loop'
+            config:
+              maxParallelToolCalls: 3

@@ -6,13 +6,14 @@
 
 逐项给出**结论 + 源码位置/原文证据**，不得只写"已确认"。
 
-## 1. PresetDefinition.plugins 数组项格式 —— 已确认（源码级）
-- 结论：plugins 是 **Cordis Loader 条目列表（EntryOptions[]）**，即 cordis.yml 中插件行的结构化形式（name + config 等），不是裸字符串。
-- 证据：packages/preset/agent-preset-registry/src/mount.ts:204-209：
-  `mountPreset(ctx, id, plugins)` 内 `tree.root.update(prepareProfileEntries(ctx, plugins as EntryOptions[], ctx.baseUrl))`。
-- **关键约束**（同文件 :213）：preset 子树发布的服务必须位于 isolate realm，否则 mount 直接拒绝（`Preset services require isolate realms`）。元控制器 preset 内的插件设计必须遵守。
-- 挂载前提（:205）：`mounting requires a scope`——preset 挂载发生在 scope 上下文，非全局。
-- 函数插件导出规范（packages/AGENTS.md）：named export `name / inject / Config / apply`，**不得有 default export**（混用会被 Loader 丢弃命名空间）。
+## 1. PresetDefinition.plugins 数组项格式 —— 已确认（源码级 + 官方 YAML 范例）
+- 结论：plugins 是 **Cordis Loader 条目列表（EntryOptions[]）**，YAML 形式为 `{id, name, config}` 行；分组用 `name: cordis:group, group: true, isolate: {...}`。preset 本体是一条 `name: '@deepseek-ai/dsh-agent-preset'` 的插件行，config 即 PresetDefinition（id/name/order/plugins）。
+- 证据：packages/preset/agent-preset-registry/src/mount.ts:204-209（`prepareProfileEntries(ctx, plugins as EntryOptions[], ...)`）；**官方范例** packages/bundle/web-app/presets/minimal.patch.yml（persona 行：`name: '@deepseek-ai/dsh-persona', config: {prefix, complete, includeRuntimeContext}`）。
+- 系统提示词落点修正：官方 preset 用 **dsh-persona 插件的 prefix**（而非直接调 systemPrompt.section）；M2 插件生成 preset 时沿用此形式。
+- **关键约束**（mount.ts:213）：preset 子树发布的服务必须位于 isolate realm，否则 mount 拒绝（`Preset services require isolate realms`）。
+- 挂载前提（:205）：`mounting requires a scope`。
+- 函数插件导出规范（packages/AGENTS.md）：named export `name / inject / Config / apply`，不得有 default export。
+- 验证文件已备好：docs/spike/preset-a.patch.yml / preset-b.patch.yml（待 DSH 构建完成后加载验证）。
 
 ## 2. agentPresets.select 时机与 agent-preset-locked 语义 —— 已确认（源码级）
 - 结论：`select(agent: Agent, agentPreset: string): Promise<string>`，**会话级**，且**必须在会话开始前调用**——会话已启动时抛 `agent-preset/locked: This session has already started`。选中结果以 `agent-preset/selected` 事件追加进 session 日志。

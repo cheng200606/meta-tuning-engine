@@ -1,0 +1,21 @@
+# M0 静态 preset 验证 A：简洁 persona + 串行工具调用
+# 用法（DSH 构建完成后）：pnpm dsh web --patch ../../docs/spike/preset-a.patch.yml
+# 结构依据：vendor/deepseek-harness/packages/bundle/web-app/presets/minimal.patch.yml
+- insert:
+    - id: preset-meta-a
+      name: '@deepseek-ai/dsh-agent-preset'
+      config:
+        id: meta-a
+        name: Meta A (concise, serial)
+        order: 90
+        plugins:
+          - id: persona
+            name: '@deepseek-ai/dsh-persona'
+            config:
+              prefix: You are an efficient assistant. Answer directly with minimal explanation.
+              complete: true
+              includeRuntimeContext: false
+          - id: agent-loop
+            name: '@deepseek-ai/dsh-agent-loop'
+            config:
+              maxParallelToolCalls: 1
