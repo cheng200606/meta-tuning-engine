@@ -4,7 +4,7 @@
 
 - 架构与论文定位：[../创新点.md](../创新点.md)
 - 执行方案（里程碑/预算/分工）：[../开发实验方案.md](../开发实验方案.md)
-- **当前状态：M0 未开工。先读 [docs/g0-protocol.md](docs/g0-protocol.md) 与 [docs/dsh-spike.md](docs/dsh-spike.md)。**
+- **当前状态：G0 门禁已通过（C1+C2，PASS→M2），决议待组长签署（docs/g0-decision.md）。背景先读 [docs/g0-protocol.md](docs/g0-protocol.md) 与 [docs/dsh-spike.md](docs/dsh-spike.md)。**
 
 ## 结构
 
