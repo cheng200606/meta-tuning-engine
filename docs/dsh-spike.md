@@ -37,4 +37,5 @@
 ## 静态 preset 验证（M0 出口）
 - [ ] 两个静态 preset（不同 system prompt + 不同 maxParallelToolCalls）经 cordis.yml --patch 加载
 - [ ] Web UI 切换后行为差异可观测（记录截图/trace）
-- 阻塞：DSH 依赖安装/构建进行中；Web UI 验证需要模型 API 密钥。
+- 阻塞：DSH 构建进行中；真实模型行为差异需要 API 密钥。
+- **无密钥替代验证（已确认可行）**：DSH 自带 mock LLM 服务器（`pnpm run mock:llm -- --sequence success --repeat-last --port 8000`，packages/test-support/llm-mock-server），会话适配器读 `DEEPSEEK_BASE_URL`/`DEEPSEEK_API_KEY` 环境变量（packages/boot/app-boot/src/index.ts:150）。设 `DEEPSEEK_BASE_URL=http://127.0.0.1:8000` + 任意占位 key，即可 headless 跑通并验证：preset 注册/挂载成功、select 事件入 session 日志、persona 文本进入模型请求（mock 服务器可打印请求）。模型输出行为差异仍需真实密钥，留待密钥就绪。

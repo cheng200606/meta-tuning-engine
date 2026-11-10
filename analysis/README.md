@@ -4,8 +4,9 @@
 
 ```bash
 uv venv --python 3.11
-# 本机直连 pypi.org 会挂起，必须显式指定镜像源（2026-11-10 实测）
-uv pip install --default-index https://registry.npmmirror.com/simple pandas scipy scikit-learn matplotlib
+# 本机直连 pypi.org 会挂起；npmmirror 无 PyPI simple 索引（404）、清华源 403，
+# 实测阿里云镜像可用（2026-11-10）。uv 需 --native-tls 信任系统证书库（代理 MITM）。
+uv pip install --native-tls --default-index https://mirrors.aliyun.com/pypi/simple/ pandas scipy scikit-learn matplotlib
 ```
 
 不要用系统 Python 3.14（PyTorch/LLaMA-Factory 无对应 wheel）。
