@@ -5,4 +5,6 @@ vendor/
 *.log
 experiments/**/traces/
 __pycache__/
-.venv/
+.venv/tasks/**/*.js
+tasks/**/*.d.ts
+lefthook.yml
