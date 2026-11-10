@@ -30,8 +30,15 @@ docs/                      G0 协议、spike 记录、决议与报告
 # 前置：pnpm（corepack enable && corepack prepare pnpm@latest --activate）
 pnpm install
 pnpm build        # 拓扑序构建各包
-pnpm test         # vitest（action-space 单测）
+pnpm test         # vitest（action-space + runner + G0 判定器自测）
 pnpm typecheck    # 需先 build（workspace 依赖走 dist）
+
+# G0 实验（需 .env 密钥 + 协议签字冻结 + availability 实测填写）
+node --env-file=.env --import tsx/esm scripts/run-g0.ts --smoke   # 20 episode 冒烟
+node --env-file=.env --import tsx/esm scripts/run-g0.ts --full    # 648 episode 门禁实验
+
+# DSH preset 注入链路无密钥验证（需 vendor/deepseek-harness 已构建）
+cd vendor/deepseek-harness && node --import tsx/esm ../../scripts/verify-presets.ts
 ```
 
 密钥放 `.env`（参考 `.env.example`），绝不提交。

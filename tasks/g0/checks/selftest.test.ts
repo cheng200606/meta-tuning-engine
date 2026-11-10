@@ -1,6 +1,6 @@
 // 判定器自测：每任务正例/反例各一（G0 协议 §4 要求，开跑前必须通过）
 import { describe, expect, it } from 'vitest'
-import { VirtualFS } from '../env/virtual-fs.ts'
+import { VirtualFS } from '../../../packages/runner/src/virtual-fs.ts'
 import type { EpisodeOutcome } from '../env/checker-types.ts'
 import { checkers } from './index.ts'
 

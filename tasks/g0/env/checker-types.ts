@@ -1,5 +1,5 @@
 // G0 判定器公共类型与断言工具。判定标准冻结于 tasks.manifest.json 的 expected 字段。
-import type { VirtualFS } from './virtual-fs.ts'
+import type { VirtualFS } from '../../../packages/runner/src/virtual-fs.ts'
 
 export interface EpisodeOutcome {
   fs: VirtualFS

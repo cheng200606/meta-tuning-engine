@@ -1,5 +1,5 @@
-// G0 预置数据与固定数据表（与 tasks.manifest.json 的 fixtures 描述一致，冻结后不得修改）
-
+// G0 各任务预置文件（与 tasks.manifest.json 的 fixtures 描述一致，冻结后不得修改）
+// 固定数据表（天气/城市/订单）在 packages/runner/src/data-tables.ts
 export const fixturesByTask: Record<string, Record<string, string>> = {
   'g0-tool-01': { 'sales.csv': '100\n200\n300\n400\n500\n' },
   'g0-tool-02': {},
@@ -30,12 +30,3 @@ export const fixturesByTask: Record<string, Record<string, string>> = {
   },
   'g0-code-04': {},
 }
-
-export const weatherTable: Record<string, number> = { 北京: 5, 上海: 12, 广州: 24 }
-
-export const cityTable: Record<string, { population: number; province: string }> = {
-  上海: { population: 24870000, province: '上海' },
-  杭州: { population: 12520000, province: '浙江' },
-}
-
-export const ordersTable: Record<string, number[]> = { C001: [300, 450, 300] }

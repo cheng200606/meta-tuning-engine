@@ -1,6 +1,6 @@
 // G0 判定器：标准冻结于 tasks.manifest.json 的 expected；本文件实现不得偏离。
 import { answerIncludes, fail, fileEquals, ok, type Checker, type EpisodeOutcome } from '../env/checker-types.ts'
-import { runJsAssertions } from '../env/run-js.ts'
+import { runJsAssertions } from '../../../packages/runner/src/run-js.ts'
 
 function solution(outcome: EpisodeOutcome): string | null {
   try {
