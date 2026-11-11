@@ -19,6 +19,8 @@
 | G0 协议冻结 | ✅ 组长程夏 2026-11-10 签字 | v1.0-已冻结；冒烟 20 episode 通过（16/20，失败为真实任务失败）；预算核对通过 |
 | G0 全量实验 | ✅ 2026-11-11 02:47 完成 | 648 episode；C1+C2 通过（原口径 delta=7.3pp）；infra_error 62 例留痕（qwen 429 限流）；判据经独立重算复核与 report.json 一致 |
 | G0 infra 修复跑 | ✅ 2026-11-11 06:05 完成 | 62/62 回收（qwen 56 + glm 6），0 例仍失败；产物独立文件（repair-episodes.jsonl / repair-report.json），原数据未改动；合并口径每格 n=24 满格，C1+C2 仍通过（delta=5.6pp，qwen 最优移至 step_by_step-p1）；修复消耗 1.02M tokens（≈¥14），总计 3.80M ≈¥51＜¥150 上限；决议 docs/g0-decision.md 待组长签字 |
+| G0 决议生效 | ✅ 2026-11-11 | 组长批准选项 A + 指示继续，口头批准留痕（正式签字待补）；双修复跑透明记录于决议文档；主口径=分离文件修复（838529f） |
+| M2 策略库+插件 | ✅ 2026-11-11 | policies.json 三基座 G0 最优配置入库；plugin-meta-controller 真实实现（策略库→preset→agent/created select）；scripts/verify-plugin.ts 无密钥端到端验证两基座 persona 注入通过；build/typecheck/35 测试全绿。范围：prompt_style 维度；parallel/reasoning 注入留 M2.1（preset 内禁放 agent-loop，需根部配置机制） |
 
 ## 本机网络要点（实测）
 

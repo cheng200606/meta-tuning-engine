@@ -1,0 +1,19 @@
+{
+  "date": "2026-11-11T07:11:09.316Z",
+  "results": [
+    {
+      "baseId": "deepseek-v3",
+      "headlessExit": 0,
+      "requests": 2,
+      "policyPersonaInjected": true,
+      "stderr": ""
+    },
+    {
+      "baseId": "glm-4.5-air",
+      "headlessExit": 0,
+      "requests": 2,
+      "policyPersonaInjected": true,
+      "stderr": ""
+    }
+  ]
+}

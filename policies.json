@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "entries": [
+    {
+      "base_id": "deepseek-v3",
+      "config": { "prompt_style": "step_by_step", "max_parallel_tool_calls": 3, "reasoning_effort": "off" },
+      "dev_score": 0.8333333333333334,
+      "search_meta": { "method": "g0-grid", "episodes": 216, "commit": "838529f", "date": "2026-11-11" }
+    },
+    {
+      "base_id": "qwen3-8b",
+      "config": { "prompt_style": "step_by_step", "max_parallel_tool_calls": 1, "reasoning_effort": "off" },
+      "dev_score": 0.4583333333333333,
+      "search_meta": { "method": "g0-grid", "episodes": 216, "commit": "838529f", "date": "2026-11-11" }
+    },
+    {
+      "base_id": "glm-4.5-air",
+      "config": { "prompt_style": "concise", "max_parallel_tool_calls": 1, "reasoning_effort": "off" },
+      "dev_score": 0.9166666666666666,
+      "search_meta": { "method": "g0-grid", "episodes": 216, "commit": "838529f", "date": "2026-11-11" }
+    }
+  ]
+}

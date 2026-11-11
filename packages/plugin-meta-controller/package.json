@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "@meta-tuning/action-space": "workspace:*",
-    "@meta-tuning/policy-store": "workspace:*"
+    "@meta-tuning/policy-store": "workspace:*",
+    "@meta-tuning/runner": "workspace:*",
+    "zod": "^4.4.3"
   },
   "peerDependencies": {
     "cordis": "*"

@@ -2,6 +2,8 @@ import { configId, type AgentConfig } from '@meta-tuning/action-space'
 import { MockTools, toolDefs } from './mock-tools.js'
 import { promptTemplates } from './prompt-templates.js'
 
+export { promptTemplates } from './prompt-templates.js'
+
 export type TaskCategory = 'tool' | 'reasoning' | 'code'
 
 export interface Task {
