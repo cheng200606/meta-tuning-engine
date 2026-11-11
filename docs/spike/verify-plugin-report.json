@@ -1,18 +1,37 @@
 {
-  "date": "2026-11-11T07:11:09.316Z",
+  "date": "2026-11-11T17:15:20.862Z",
   "results": [
     {
       "baseId": "deepseek-v3",
       "headlessExit": 0,
       "requests": 2,
-      "policyPersonaInjected": true,
+      "personaInjected": true,
+      "observedMaxParallel": "3",
+      "observedReasoningEffort": "unset",
+      "lookupMs": 0.46,
+      "selectMs": 0.81,
       "stderr": ""
     },
     {
       "baseId": "glm-4.5-air",
       "headlessExit": 0,
       "requests": 2,
-      "policyPersonaInjected": true,
+      "personaInjected": true,
+      "observedMaxParallel": "1",
+      "observedReasoningEffort": "unset",
+      "lookupMs": 0.47,
+      "selectMs": 0.77,
+      "stderr": ""
+    },
+    {
+      "baseId": "test-base",
+      "headlessExit": 0,
+      "requests": 2,
+      "personaInjected": true,
+      "observedMaxParallel": "2",
+      "observedReasoningEffort": "low",
+      "lookupMs": 1.19,
+      "selectMs": 1.14,
       "stderr": ""
     }
   ]

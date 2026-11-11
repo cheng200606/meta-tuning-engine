@@ -46,3 +46,9 @@
 4. launcher 旗标顺序：`dsh --patch x.yml --profile headless "task"`（--patch 在 profile 前）；headless app 自身不认 --patch。
 5. mock LLM 直启：`node --import tsx/esm packages/test-support/llm-mock-server/src/bin.ts --sequence success --repeat-last --port 8000`（pnpm run mock:llm 的 `--` 转发会丢参数）；编程接口 startMockLlmServer 保留完整请求体（验证脚本用法）。
 6. 会话日志为 zstd 压缩（session.v4.jsonl.zstd），Node 24 zlib.zstdDecompressSync 可读；headless 短会话可能只刷 header，请求体快照在模型请求的 dsh_session_log 字段内。
+## 6. M2.1 注入机制（2026-11-11 源码级核查 + 无密钥验证通过）
+
+1. **maxParallelToolCalls 唯一注入路径 = 根部 config 覆盖行**：该值是 cordis `Volatile<number>`（agent-loop Config schema `.volatile()`），cosmokit volatile.d.ts 明确 `Volatile<T>` 仅暴露 `get()`、"值仅由其所属 runtime 更新"——插件**无法**运行时改写。受支持入口：patch 对 base bundle 条目 `agent-loop`（cordis.patch.yml:530）做同 id config 覆盖（PatchOptions 按键合并、last-wins）。生成器：packages/plugin-meta-controller/src/overlay.ts（与插件同读一份 policies.json，单一事实来源）。
+2. **reasoning_effort 运行期注入 = AgentModel.select()**：packages/core/agent/src/model-selection.ts:117，公开 API，记录 `model/selection` 会话事件、下一请求生效；必须在首个步骤准备前调用（之后 DSH 拒绝：agent.ts:638-639）。`agent/created` 载荷带完整 Agent（含公开 `.model`，agent.ts:113）。off 策略 = 不调用（adapter 默认）。
+3. **`agent/pre-step` 是 @mode waterfall**（runtime-types.ts:348）：监听者契约 `(payload, next) => Promise<PreStepDecision>`，必须调用并返回 `next()`。用单参普通 `on()` 监听会打断瀑布链——driver 读到 undefined decision，报 `UNKNOWN: Cannot read properties of undefined (reading 'kind')` 且进程退出（实测踩坑，见 docs/spike/observe-config.ts 的正确写法）。
+4. **验证**：scripts/verify-plugin.ts 三用例（deepseek-v3 / glm-4.5-air / 合成 reasoning=low 策略）全绿：persona + maxParallel(3/1/2) + reasoning(unset/low) 首步实际生效值断言通过；注入延迟 lookup 0.46–1.19ms、select ≈1ms（目标 <100ms）。报告 docs/spike/verify-plugin-report.json。
