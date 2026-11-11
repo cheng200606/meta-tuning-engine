@@ -69,7 +69,8 @@ try {
     const code = await new Promise((resolve) => child.on('exit', resolve))
     const bodies = server.requests.map((r) => JSON.stringify(r.body))
     const personaInjected = bodies.some((b) => b.includes(c.expectedPersona.slice(0, 60)))
-    const metaLine = stdout.split('\n').find((l) => l.includes('[meta-controller]'))
+    // meta-controller 诊断日志走 stderr（headless stdout 只承载最终答案）
+    const metaLine = (stderr + stdout).split('\n').find((l) => l.includes('[meta-controller]'))
     const meta = Object.fromEntries((metaLine?.split(' ').filter((t) => t.includes('=')).map((t) => t.split('=')) ?? []) as Array<[string, string]>)
     // pre-step 读到的是首步实际生效值；created 行仅作参考。
     const preStep = stdout.split('\n').find((l) => l.includes('OBSERVE tag=pre-step'))

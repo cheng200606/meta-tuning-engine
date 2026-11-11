@@ -77,7 +77,7 @@ export function apply(ctx: Context, config: Config): void {
     const t1 = performance.now()
     await dsh.agentPresets.select(agent, definition.id)
     const selectMs = performance.now() - t1
-    // 注入延迟（M2 出口项：查表路径目标 <100ms）
-    console.info(`[meta-controller] base=${config.baseId} lookupMs=${lookupMs.toFixed(2)} selectMs=${selectMs.toFixed(2)} persona=${agentConfig.prompt_style} parallel=${agentConfig.max_parallel_tool_calls} reasoning=${agentConfig.reasoning_effort}`)
+    // 注入延迟（M2 出口项：查表路径目标 <100ms）。诊断日志走 stderr：headless 的 stdout 只承载最终答案。
+    console.error(`[meta-controller] base=${config.baseId} lookupMs=${lookupMs.toFixed(2)} selectMs=${selectMs.toFixed(2)} persona=${agentConfig.prompt_style} parallel=${agentConfig.max_parallel_tool_calls} reasoning=${agentConfig.reasoning_effort}`)
   })
 }

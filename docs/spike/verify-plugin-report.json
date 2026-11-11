@@ -1,5 +1,5 @@
 {
-  "date": "2026-11-11T17:15:20.862Z",
+  "date": "2026-11-11T17:29:28.720Z",
   "results": [
     {
       "baseId": "deepseek-v3",
@@ -8,9 +8,9 @@
       "personaInjected": true,
       "observedMaxParallel": "3",
       "observedReasoningEffort": "unset",
-      "lookupMs": 0.46,
-      "selectMs": 0.81,
-      "stderr": ""
+      "lookupMs": 0.29,
+      "selectMs": 1.35,
+      "stderr": "[meta-controller] base=deepseek-v3 lookupMs=0.29 selectMs=1.35 persona=step_by_step parallel=3 reasoning=off\n"
     },
     {
       "baseId": "glm-4.5-air",
@@ -19,9 +19,9 @@
       "personaInjected": true,
       "observedMaxParallel": "1",
       "observedReasoningEffort": "unset",
-      "lookupMs": 0.47,
-      "selectMs": 0.77,
-      "stderr": ""
+      "lookupMs": 0.33,
+      "selectMs": 0.82,
+      "stderr": "[meta-controller] base=glm-4.5-air lookupMs=0.33 selectMs=0.82 persona=concise parallel=1 reasoning=off\n"
     },
     {
       "baseId": "test-base",
@@ -30,9 +30,9 @@
       "personaInjected": true,
       "observedMaxParallel": "2",
       "observedReasoningEffort": "low",
-      "lookupMs": 1.19,
-      "selectMs": 1.14,
-      "stderr": ""
+      "lookupMs": 1.67,
+      "selectMs": 2.27,
+      "stderr": "[meta-controller] base=test-base lookupMs=1.67 selectMs=2.27 persona=constrained parallel=2 reasoning=low\n"
     }
   ]
 }

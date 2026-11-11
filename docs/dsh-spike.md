@@ -52,3 +52,12 @@
 2. **reasoning_effort 运行期注入 = AgentModel.select()**：packages/core/agent/src/model-selection.ts:117，公开 API，记录 `model/selection` 会话事件、下一请求生效；必须在首个步骤准备前调用（之后 DSH 拒绝：agent.ts:638-639）。`agent/created` 载荷带完整 Agent（含公开 `.model`，agent.ts:113）。off 策略 = 不调用（adapter 默认）。
 3. **`agent/pre-step` 是 @mode waterfall**（runtime-types.ts:348）：监听者契约 `(payload, next) => Promise<PreStepDecision>`，必须调用并返回 `next()`。用单参普通 `on()` 监听会打断瀑布链——driver 读到 undefined decision，报 `UNKNOWN: Cannot read properties of undefined (reading 'kind')` 且进程退出（实测踩坑，见 docs/spike/observe-config.ts 的正确写法）。
 4. **验证**：scripts/verify-plugin.ts 三用例（deepseek-v3 / glm-4.5-air / 合成 reasoning=low 策略）全绿：persona + maxParallel(3/1/2) + reasoning(unset/low) 首步实际生效值断言通过；注入延迟 lookup 0.46–1.19ms、select ≈1ms（目标 <100ms）。报告 docs/spike/verify-plugin-report.json。
+
+## 7. 一致性校验的 DSH 侧工具通道（2026-11-12 无密钥冒烟通过）
+
+- **工具插件**：packages/plugin-meta-controller/src/g0-tools.ts —— 按**相对路径**直接复用 packages/runner 的 MockTools/fixturesByTask（同一份代码 = 语义一致，这是一致性校验 ≤10pp 的前提）；defineTool 按相对路径直连 vendor 源文件（'@deepseek-ai/dsh-tools' 包名从本仓库无法解析）。已从包 tsconfig exclude（仅 tsx 运行时加载，overlay 引用 src 路径，不进 dist）。
+- **方言坑**：DSH parameters 是 per-field `required: true` 方言——`required` 键一旦出现必须为 true，可选参数要整体省略该键（否则 JsonSchemaError 拒绝挂载）。
+- **FS 交接**：Config.dumpFsPath + process.on('exit') 落盘 VirtualFS.snapshot()，驱动侧重建 VirtualFS 交给同一判定器。headless 一次性进程 = 每 episode 天然重置。
+- **线格式（真实驱动必读）**：DSH 请求是 Anthropic-messages 风格（messages[].content[].type='text'、顶层 system 字符串、thinking 对象），不是 OpenAI chat 格式；**session-title 会发独立 LLM 请求**（真实跑批须在 overlay 禁用 session-title，否则污染 episode 的请求数/token 计量）。
+- **冒烟证据**：scripts/verify-consistency-smoke.ts（g0-tool-04：calculate→37.0）全链路通过：插件激活→工具执行→工具结果回流→FS 落盘→runner 判定器 ok；注入延迟 0.39ms。报告 docs/spike/verify-consistency-smoke-report.json。
+- **下一步（真实一致性校验）**：真实模型 × 6 任务 × 2 配置 × 双通道（runner 直连 API vs DSH headless+g0-tools），完成率差 ≤10pp；跑前在 overlay 禁用 session-title。
