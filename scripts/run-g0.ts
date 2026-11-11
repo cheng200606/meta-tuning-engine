@@ -12,6 +12,7 @@ import { JSON_SCHEMA, load as loadYaml } from 'js-yaml'
 import { enumerateConfigs, configId, type AgentConfig, type Availability } from '@meta-tuning/action-space'
 import { runEpisode, type EpisodeRecord, type Task } from '../packages/runner/src/index.ts'
 import { MockTools } from '../packages/runner/src/mock-tools.ts'
+import { computeG0Report } from '../packages/search/src/g0-report.ts'
 import { fixturesByTask } from '../tasks/g0/env/fixtures.ts'
 import { checkers } from '../tasks/g0/checks/index.ts'
 
@@ -108,42 +109,13 @@ async function worker(): Promise<void> {
 
 await Promise.all([worker(), worker()])
 
-// 判据计算（协议 §5）：infra_error 不计入指标
-function rate(baseId: string, cid: string): { r: number; steps: number; n: number } {
-  const rows = records.filter((x) => x.base === baseId && x.config_id === cid && x.success !== 'infra_error')
-  const n = rows.length
-  const r = n === 0 ? 0 : rows.filter((x) => x.success === true).length / n
-  const steps = n === 0 ? 0 : rows.reduce((s, x) => s + x.steps, 0) / n
-  return { r, steps, n }
-}
-
-const baseIds = runBases.map((b) => b.id)
-const cids = runConfigs.map(configId)
-const matrix: Record<string, Record<string, number>> = {}
-for (const b of baseIds) {
-  matrix[b] = {}
-  for (const c of cids) matrix[b][c] = rate(b, c).r
-}
-const gaps: Record<string, number> = {}
-const perModelBest: Record<string, string> = {}
-for (const b of baseIds) {
-  const values = cids.map((c) => matrix[b][c])
-  gaps[b] = Math.max(...values) - Math.min(...values)
-  perModelBest[b] = [...cids].sort((x, y) => matrix[b][y] - matrix[b][x] || rate(b, x).steps - rate(b, y).steps || x.localeCompare(y))[0]
-}
-const globalMean = (c: string) => baseIds.reduce((s, b) => s + matrix[b][c], 0) / baseIds.length
-const globalSteps = (c: string) => baseIds.reduce((s, b) => s + rate(b, c).steps, 0) / baseIds.length
-const cGlobal = [...cids].sort((x, y) => globalMean(y) - globalMean(x) || globalSteps(x) - globalSteps(y) || x.localeCompare(y))[0]
-const delta = baseIds.reduce((s, b) => s + matrix[b][perModelBest[b]], 0) / baseIds.length - globalMean(cGlobal)
-const c1 = Object.values(gaps).filter((g) => g >= 0.10).length >= 2
-const c2 = delta >= 0.03
-
-const report = {
-  mode, date: new Date().toISOString(), episodes: records.length,
+// 判据计算（协议 §5）：共享模块，与修复跑同一实现
+const report = computeG0Report({
+  records,
+  baseIds: runBases.map((b) => b.id),
+  cids: runConfigs.map(configId),
+  mode,
   infraFailures: infraFailures.map((f) => ({ task: f.job.task.id, base: f.job.base.id, config: configId(f.job.config), seed: f.job.seed, reason: f.reason })),
-  matrix, gaps, perModelBest, cGlobal, delta, C1: c1, C2: c2,
-  decision: mode === 'full' ? (c1 && c2 ? 'PASS -> M2' : c1 ? 'DOWNGRADE (C1 only)' : 'STOP') : `${mode}-only (no decision)`,
-  tokens: records.reduce((s, x) => s + x.prompt_tokens + x.completion_tokens, 0),
-}
+})
 writeFileSync(path.join(outDir, 'report.json'), JSON.stringify(report, null, 2))
-console.log(JSON.stringify({ C1: c1, C2: c2, delta, decision: report.decision, tokens: report.tokens }, null, 2))
+console.log(JSON.stringify({ C1: report.C1, C2: report.C2, delta: report.delta, decision: report.decision, tokens: report.tokens }, null, 2))
