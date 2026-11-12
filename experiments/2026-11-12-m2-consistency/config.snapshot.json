@@ -37,6 +37,6 @@
     "dsh"
   ],
   "manifestHash": "43059cb4d2e5be37dd83553bd9ecbddd0bc4dd3a0ec43944c21cc89b6fea1004",
-  "commit": "cbac1301b57957281bfc44de55bd931a9e6a71e5",
+  "commit": "a50bd671db2cef1d54d9e7b541d3f4d2c3c09436",
   "knownDivergence": "DSH has no temperature config (provider default); runner uses protocol temperature 0"
 }

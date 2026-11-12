@@ -18,6 +18,8 @@ export interface OverlaySpec {
   presetRegistry?: boolean
   /** 测试观察者插件入口（验证用：agent/created 与 agent/pre-step 时输出 OBSERVE 行）。 */
   observerEntry?: string
+  /** G0 mock 工具通道（一致性校验用）：挂载 g0-tools 插件并注入任务/落盘配置。 */
+  g0Tools?: { entry: string; taskId: string; dumpFsPath?: string }
 }
 
 /** 读取策略并解析为有效配置（无策略回退默认，与插件兜底纪律一致）。 */
@@ -50,6 +52,17 @@ export function buildOverlayYaml(spec: OverlaySpec, availability: Availability =
     `        policyStore: ${yamlPath(spec.policyStore)}`,
     `        baseId: ${spec.baseId}`,
   )
+  if (spec.g0Tools !== undefined) {
+    lines.push(
+      '    - id: g0-tools',
+      `      name: ${yamlPath(spec.g0Tools.entry)}`,
+      '      config:',
+      `        taskId: ${spec.g0Tools.taskId}`,
+    )
+    if (spec.g0Tools.dumpFsPath !== undefined) {
+      lines.push(`        dumpFsPath: ${yamlPath(spec.g0Tools.dumpFsPath)}`)
+    }
+  }
   if (spec.observerEntry) {
     lines.push(
       '    - id: observe-config',

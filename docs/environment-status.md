@@ -35,4 +35,4 @@
 ## 开源仓库
 
 - https://github.com/cheng200606/meta-tuning-engine（public，main）
-- 已推送：骨架 + G0 协议 + spike 结论 + preset 验证文件 + MIT LICENSE。
+- 已推送：骨架 + G0 协议 + spike 结论 + preset 验证文件 + MIT LICENSE。| M2 出口一致性校验 | ✅ 2026-11-13 | 24 episode（deepseek-v3 × 6 任务 × 2 配置 × 双通道 × seed 0）：**runner vs DSH 完成率差 = 0（两个配置均完全一致），≤10pp 门禁通过，M2 正式完成**。残余失败项为两通道对称的已知判定语义（严格答案匹配、vm×CommonJS），非通道差异。诊断历程：run1/run2 失败根因 = 一致性 overlay 漏挂 g0-tools（模型改用 DSH 内置工具写真实沙箱）+ restrict 修复，修复过程三份报告留档于 experiments/2026-11-12-m2-consistency/；工具隔离（allow-list）与工具使用档案已固化进 g0-tools |

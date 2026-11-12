@@ -17,9 +17,9 @@
 | CI / 开源门面 | 无 CI；README 状态行滞后于 environment-status |
 | 预算消耗 | G0 全量 + 修复 ≈ ¥51（上界单价），协议默认上限 ¥150 |
 
-## P0 — M2 出口：真实模型一致性校验（阻塞项，先做）
+## P0 — M2 出口：真实模型一致性校验（阻塞项，先做）✅ 2026-11-13 完成
 
-**目标**：证明 runner 通道与 DSH 通道在同一任务同一配置下行为一致（完成率差 ≤ 10pp）——论文结果可迁移的前提（开发实验方案 §5.3）。
+**结果**：gap = 0（两配置 runner/dsh 完成率完全一致，24 episode）→ **M2 正式出口达成，进入 M3**。诊断历程与三份中间报告见 experiments/2026-11-12-m2-consistency/（根因：overlay 漏挂 g0-tools，模型改用 DSH 内置工具；工具隔离修复后双通道逐任务对称）。
 
 **任务**：
 1. `scripts/run-consistency.ts`：deepseek-v3 × 6 任务（tool/reasoning/code 各 2）× 2 配置（step_by_step-p3 与 concise-p1，刻意对比）× seed 0 × 双通道 = 24 episode；

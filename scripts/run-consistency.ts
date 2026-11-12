@@ -95,6 +95,10 @@ async function dshEpisode(task: Task, config: AgentConfig, cid: string, tmp: str
   writeFileSync(overlay, buildOverlayYaml({
     pluginEntry: path.join(root, 'packages/plugin-meta-controller/src/index.ts'),
     policyStore: store, baseId: BASE_ID, presetRegistry: true,
+    g0Tools: {
+      entry: path.join(root, 'packages/plugin-meta-controller/src/g0-tools.ts'),
+      taskId: task.id, dumpFsPath,
+    },
   }) + '- id: session-title\n  disabled: true\n')
   const child = spawn(process.execPath, [
     '--import', 'tsx/esm', 'apps/cli/src/bin.ts',

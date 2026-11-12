@@ -1,6 +1,0 @@
-- insert:
-    - id: g0-tools
-      name: D:/ProfessionalSoftware/Project/元调优引擎/meta-tuning-engine/packages/plugin-meta-controller/src/g0-tools.ts
-      config:
-        taskId: g0-tool-02
-        dumpFsPath: C:/Users/Lenovo/AppData/Local/Temp/neutral-cwd-vUM3kY/fs.json

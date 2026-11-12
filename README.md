@@ -5,7 +5,7 @@
 - 架构与论文定位：[../创新点.md](../创新点.md)
 - 执行方案（里程碑/预算/分工）：[../开发实验方案.md](../开发实验方案.md)
 - 迭代方案（当前-待办）：[docs/iteration-plan.md](docs/iteration-plan.md)
-- **当前状态：G0 通过（C1+C2）；M2 插件三维度注入完成（persona/parallel/reasoning，注入延迟 <1.2ms）；M2 出口一致性校验执行中（docs/iteration-plan.md P0）。进展明细以 [docs/environment-status.md](docs/environment-status.md) 为准。**
+- **当前状态：M2 正式完成（三维度注入 + 一致性校验 gap=0），进入 M3。进展明细以 [docs/environment-status.md](docs/environment-status.md) 为准。**
 
 ## 结构
 
