@@ -10,3 +10,4 @@ tasks/**/*.d.ts
 lefthook.yml
 packages/**/src/**/*.js
 packages/**/src/**/*.d.ts
+analysis/out/
