@@ -1,0 +1,198 @@
+{
+  "plan": "docs/iteration-plan.md P1",
+  "method": "halving",
+  "base": {
+    "id": "deepseek-v3",
+    "model": "deepseek-chat"
+  },
+  "seed": 0,
+  "configs": [
+    "concise-p1-roff",
+    "concise-p1-rlow",
+    "concise-p1-rhigh",
+    "concise-p2-roff",
+    "concise-p2-rlow",
+    "concise-p2-rhigh",
+    "concise-p3-roff",
+    "concise-p3-rlow",
+    "concise-p3-rhigh",
+    "step_by_step-p1-roff",
+    "step_by_step-p1-rlow",
+    "step_by_step-p1-rhigh",
+    "step_by_step-p2-roff",
+    "step_by_step-p2-rlow",
+    "step_by_step-p2-rhigh",
+    "step_by_step-p3-roff",
+    "step_by_step-p3-rlow",
+    "step_by_step-p3-rhigh",
+    "constrained-p1-roff",
+    "constrained-p1-rlow",
+    "constrained-p1-rhigh",
+    "constrained-p2-roff",
+    "constrained-p2-rlow",
+    "constrained-p2-rhigh",
+    "constrained-p3-roff",
+    "constrained-p3-rlow",
+    "constrained-p3-rhigh"
+  ],
+  "tasks": [
+    "g0-tool-01",
+    "g0-tool-02",
+    "g0-tool-03",
+    "g0-tool-04",
+    "g0-reas-01",
+    "g0-reas-02",
+    "g0-reas-03",
+    "g0-reas-04",
+    "g0-code-01",
+    "g0-code-02",
+    "g0-code-03",
+    "g0-code-04",
+    "dev-tool-01",
+    "dev-tool-02",
+    "dev-reas-01",
+    "dev-reas-02",
+    "dev-code-01",
+    "dev-code-02"
+  ],
+  "rounds": [
+    {
+      "keep": 9,
+      "tasks": [
+        {
+          "id": "g0-tool-01"
+        },
+        {
+          "id": "g0-tool-02"
+        },
+        {
+          "id": "g0-tool-03"
+        },
+        {
+          "id": "g0-tool-04"
+        },
+        {
+          "id": "g0-reas-01"
+        },
+        {
+          "id": "g0-reas-02"
+        }
+      ],
+      "seeds": [
+        0
+      ]
+    },
+    {
+      "keep": 3,
+      "tasks": [
+        {
+          "id": "g0-tool-01"
+        },
+        {
+          "id": "g0-tool-02"
+        },
+        {
+          "id": "g0-tool-03"
+        },
+        {
+          "id": "g0-tool-04"
+        },
+        {
+          "id": "g0-reas-01"
+        },
+        {
+          "id": "g0-reas-02"
+        },
+        {
+          "id": "g0-reas-03"
+        },
+        {
+          "id": "g0-reas-04"
+        },
+        {
+          "id": "g0-code-01"
+        },
+        {
+          "id": "g0-code-02"
+        },
+        {
+          "id": "g0-code-03"
+        },
+        {
+          "id": "g0-code-04"
+        }
+      ],
+      "seeds": [
+        0,
+        1
+      ]
+    },
+    {
+      "keep": 1,
+      "tasks": [
+        {
+          "id": "g0-tool-01"
+        },
+        {
+          "id": "g0-tool-02"
+        },
+        {
+          "id": "g0-tool-03"
+        },
+        {
+          "id": "g0-tool-04"
+        },
+        {
+          "id": "g0-reas-01"
+        },
+        {
+          "id": "g0-reas-02"
+        },
+        {
+          "id": "g0-reas-03"
+        },
+        {
+          "id": "g0-reas-04"
+        },
+        {
+          "id": "g0-code-01"
+        },
+        {
+          "id": "g0-code-02"
+        },
+        {
+          "id": "g0-code-03"
+        },
+        {
+          "id": "g0-code-04"
+        },
+        {
+          "id": "dev-tool-01"
+        },
+        {
+          "id": "dev-tool-02"
+        },
+        {
+          "id": "dev-reas-01"
+        },
+        {
+          "id": "dev-reas-02"
+        },
+        {
+          "id": "dev-code-01"
+        },
+        {
+          "id": "dev-code-02"
+        }
+      ],
+      "seeds": [
+        0,
+        1,
+        2
+      ]
+    }
+  ],
+  "devManifestHash": "39b793fc99ebe159fb8f03af06d182ab8ec40f14da2713204ff8907b0ddd7092",
+  "commit": "ed2d807ca4599e3c21d0e1ef72aebb113618a91d",
+  "estimatedEpisodes": 540
+}

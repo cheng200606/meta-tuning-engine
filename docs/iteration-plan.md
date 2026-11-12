@@ -32,9 +32,9 @@
 **预算**：~24 episode ≈ ¥2（上界单价）。
 **风险**：DSH 线格式/工具错误文案与 runner 有差 → 记录差异不遮掩；单集 API 失败按 infra_error 处理（补跑一次）。
 
-## P1 — M3 核心算法：successive halving 搜索器（纯本地，零 API）
+## P1 — M3 核心算法：successive halving 搜索器（纯本地，零 API）✅ 2026-11-13 完成
 
-**目标**：把 `packages/search` 的 TODO 桩变成可用、可测的搜索器，M3 一开跑就能用。
+**结果**：任务 1–5 全部落地。search 包 12 个单测（淘汰/裕量并列/预算记账/可复现/边界）；`scripts/run-search.ts` CLI：`--help`、`--dry-run`（无密钥枚举 27 配置 + 轮次预算估算，任务集缺口如实警告）、`--execute`（已接 runEpisode 通道，缺密钥时干净报错，真实跑批 M3 接密钥执行）。
 
 **任务**：
 1. 实现 `successiveHalving(configs, tasks, episodeRunner, schedule)`：27→9→3→1（淘汰裕量 5pp，并列保留），episode 预算按方案 §6.2；

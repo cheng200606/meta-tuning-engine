@@ -176,4 +176,46 @@ describe('equalBudgetRandom', () => {
     await expect(successiveHalving({ baseId: 'x', configs: [], rounds: [{ keep: 1, tasks: tasks(['t1']), seeds: [0] }], runEpisode: fakeRunner({}).runner })).rejects.toThrow('configs empty')
     await expect(successiveHalving({ baseId: 'x', configs: CONFIGS, rounds: [], runEpisode: fakeRunner({}).runner })).rejects.toThrow('rounds empty')
   })
+
+  it('keep 大于幸存者时全部保留', async () => {
+    const truth: Record<string, EpisodeMetrics> = {}
+    for (const c of CONFIGS) {
+      const cid = configId(c)
+      for (const t of ['t1', 't2']) truth[`${cid}|${t}|0`] = m(cid === configId(cfg('step_by_step', 3)))
+    }
+    const { runner } = fakeRunner(truth)
+    const out = await successiveHalving({
+      baseId: 'x', configs: CONFIGS, runEpisode: runner,
+      rounds: [{ keep: 10, tasks: tasks(['t1', 't2']), seeds: [0] }],
+    })
+    expect(out.roundLog[0].kept.length).toBe(4)
+    expect(out.best_config_id).toBe(configId(cfg('step_by_step', 3)))
+  })
+
+  it('margin 缺省 0.05：与淘汰线差 0.04 的并列保留、差 0.173 的淘汰', async () => {
+    // steps [2, 2.2, 2.4, 5] → cohort 内 norm 间距 0.067/0.067/0.867，score 间距 0.013/0.013/0.173
+    const truth: Record<string, EpisodeMetrics> = {}
+    const stepsByRank = [2, 2.2, 2.4, 5]
+    for (const [i, c] of CONFIGS.entries()) {
+      const cid = configId(c)
+      for (const t of ['t1', 't2']) truth[`${cid}|${t}|0`] = m(true, stepsByRank[i])
+    }
+    const { runner } = fakeRunner(truth)
+    const out = await successiveHalving({
+      baseId: 'x', configs: CONFIGS, runEpisode: runner,
+      rounds: [{ keep: 2, tasks: tasks(['t1', 't2']), seeds: [0] }, { keep: 1, tasks: tasks(['t1', 't2']), seeds: [0] }],
+    })
+    // keep=2 淘汰线=第 2 名；第 3 名与其分差 0.013 < 0.05 → 并列保留（3 个）；第 4 名差 0.173 → 淘汰
+    expect(out.roundLog[0].kept.length).toBe(3)
+    expect(out.best_config_id).toBe(configId(CONFIGS[0]))
+  })
+
+  it('equalBudgetRandom 预算为 0 时返回字典序首个配置', async () => {
+    const rand = await equalBudgetRandom({
+      baseId: 'x', configs: CONFIGS, runEpisode: fakeRunner({}).runner,
+      budget: 0, tasks: tasks(['t1']), seeds: [0], rng: mulberry32(1),
+    })
+    expect(rand.episodes).toBe(0)
+    expect(rand.best_config_id).toBe(configId(CONFIGS[0]))
+  })
 })

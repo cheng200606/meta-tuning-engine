@@ -122,7 +122,9 @@ export async function successiveHalving(spec: HalvingSpec): Promise<HalvingOutco
     }
     const scores = cohortScore(evaluated, weights)
     for (const [cid, s] of Object.entries(scores)) totalScores[cid] = s
-    const kept = r === spec.rounds.length - 1
+    // 末轮仅在多轮赛制下取唯一冠军（确定性平局打破）；单轮搜索按 keep+margin 正常保留。
+    const isFinal = r === spec.rounds.length - 1
+    const kept = isFinal && spec.rounds.length > 1
       ? [champion(scores)] // 末轮冠军：确定性平局打破（分数字典序）
       : selectSurvivors(scores, round.keep, margin)
     survivors = survivors.filter((cid) => kept.includes(cid))
