@@ -35,6 +35,9 @@ function toDshParameters(schema: { properties?: Record<string, { type?: string }
 
 export function apply(ctx: Context, config: Config): void {
   const mock = new MockTools(fixturesByTask[config.taskId] ?? {})
+  // 工具使用档案：与 runner 通道对齐排查用（首轮一致性跑发现模型改用 DSH 内置 write，
+  // 详见 experiments/*-m2-consistency 的首轮报告）
+  const toolCalls: Array<{ name: string; isError: boolean }> = []
   for (const def of toolDefs) {
     ctx.tools.register(defineTool({
       name: def.name,
@@ -51,14 +54,25 @@ export function apply(ctx: Context, config: Config): void {
       async execute(args) {
         // 与 runner 通道对齐：错误以异常抛出（DSH 归一为错误工具结果，模型可见同一文案）。
         const result = mock.call(def.name, (args ?? {}) as Record<string, unknown>)
+        toolCalls.push({ name: def.name, isError: result.isError })
         if (result.isError) throw new Error(result.content)
         return { content: result.content }
       },
     }))
   }
+  // 工具面隔离：agent 作用域内只保留 G0 的 8 个 mock 工具，屏蔽 DSH 内置工具，
+  // 否则模型会用内置 write/read（写真实沙箱而非虚拟 FS），破坏双通道可比性。
+  const dsh = ctx as unknown as {
+    on: (event: string, listener: (payload: { agent: { ctx: { tools: { restrict(filter: { allow: string[] }): () => void } } } }) => void) => void
+  }
+  dsh.on('agent/created', ({ agent }) => {
+    agent.ctx.tools.restrict({ allow: toolDefs.map((d) => d.name) })
+  })
   if (config.dumpFsPath !== undefined) {
     process.on('exit', () => {
-      try { writeFileSync(config.dumpFsPath as string, JSON.stringify(mock.fs.snapshot())) } catch { /* exit path best-effort */ }
+      try {
+        writeFileSync(config.dumpFsPath as string, JSON.stringify({ files: mock.fs.snapshot(), toolCalls }))
+      } catch { /* exit path best-effort */ }
     })
   }
 }

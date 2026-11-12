@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "note": "dev 任务集（M3 搜索用，不冻结）。构造规范见 tasks/dev/README.md；数据表复用 packages/runner/src/data-tables.ts（G0 冻结资产）。",
+  "tasks": [
+    {
+      "id": "dev-tool-01",
+      "category": "tool",
+      "instruction": "读取 numbers.txt，把其中的数字相加，用 calculate 计算总和，并把总和写入 total.txt。",
+      "fixtures": ["numbers.txt 内容为 4 行数字：12、34、56、78（总和 180）"],
+      "tools_expected": ["read_file", "calculate", "write_file"],
+      "expected": "total.txt 内容等于 180"
+    },
+    {
+      "id": "dev-tool-02",
+      "category": "tool",
+      "instruction": "查询广州今天的天气。如果气温大于或等于 20℃，向 jacket.txt 写入 no，否则写入 yes。",
+      "fixtures": ["天气表：广州今日 24℃"],
+      "tools_expected": ["get_weather", "write_file"],
+      "expected": "jacket.txt 内容等于 no"
+    },
+    {
+      "id": "dev-reas-01",
+      "category": "reasoning",
+      "instruction": "查询上海和杭州的人口，回答人口较少的城市，直接给出该城市名。",
+      "fixtures": [],
+      "tools_expected": ["get_city_info"],
+      "expected": "答案含杭州（人口较少城市）"
+    },
+    {
+      "id": "dev-reas-02",
+      "category": "reasoning",
+      "instruction": "读取 rules.txt，按其中的赋值规则依次计算 x、y、z 的值（用 calculate 分步计算），把 z 的值写入 z.txt。",
+      "fixtures": ["rules.txt 内容：x=5；y=x*7；z=y-9（z=26）"],
+      "tools_expected": ["read_file", "calculate", "write_file"],
+      "expected": "z.txt 内容等于 26"
+    },
+    {
+      "id": "dev-code-01",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 sumPositive(numbers)，返回数组中所有正数的和（负数与 0 忽略）。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file", "run_js"],
+      "expected": "run_js 加载 solution.js 后 3 组断言全过：([1,-2,3])→4；([-1,-2])→0；([])→0"
+    },
+    {
+      "id": "dev-code-02",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 countVowels(s)，返回字符串中元音字母（a e i o u，忽略大小写）的个数。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file", "run_js"],
+      "expected": "run_js 加载 solution.js 后 3 组断言全过：('hello')→2；('XYZ')→0；('Audio')→4"
+    }
+  ]
+}

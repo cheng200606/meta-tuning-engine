@@ -1,0 +1,42 @@
+{
+  "plan": "docs/iteration-plan.md P0",
+  "base": {
+    "id": "deepseek-v3",
+    "model": "deepseek-chat",
+    "base_url": "https://api.deepseek.com/v1"
+  },
+  "arms": [
+    {
+      "label": "step_by_step-p3",
+      "config": {
+        "prompt_style": "step_by_step",
+        "max_parallel_tool_calls": 3,
+        "reasoning_effort": "off"
+      }
+    },
+    {
+      "label": "concise-p1",
+      "config": {
+        "prompt_style": "concise",
+        "max_parallel_tool_calls": 1,
+        "reasoning_effort": "off"
+      }
+    }
+  ],
+  "tasks": [
+    "g0-tool-01",
+    "g0-tool-02",
+    "g0-reas-02",
+    "g0-reas-03",
+    "g0-code-01",
+    "g0-code-02"
+  ],
+  "seed": 0,
+  "channels": [
+    "runner",
+    "dsh"
+  ],
+  "manifestHash": "43059cb4d2e5be37dd83553bd9ecbddd0bc4dd3a0ec43944c21cc89b6fea1004",
+  "commit": "cbac1301b57957281bfc44de55bd931a9e6a71e5",
+  "knownDivergence": "DSH has no temperature config (provider default); runner uses protocol temperature 0"
+}

@@ -44,8 +44,16 @@ export interface SearchOutcome {
   episodes: number
 }
 
-// TODO(M3): 网格 / 等预算随机 / successive halving（27→9→3→1，淘汰裕量 5pp）。
-// 规格见 ../开发实验方案.md §6.2。
-export async function successiveHalving(): Promise<SearchOutcome> {
-  throw new Error('M3 待实现')
-}
+export {
+  successiveHalving,
+  equalBudgetRandom,
+  mulberry32,
+  type EpisodeMetrics,
+  type EpisodeRunner,
+  type SearchTask,
+  type HalvingRound,
+  type HalvingSpec,
+  type HalvingOutcome,
+  type RoundLogEntry,
+  type RandomOutcome,
+} from './halving.js'
