@@ -1,0 +1,36 @@
+// test 保留集 fixtures（30 任务，独立构造；数据源复用 G0 冻结数据表）
+
+export const fixturesByTask: Record<string, Record<string, string>> = {
+  'test-tool-01': { 'stock.txt': 'apple: 12\npear: 30\n' },
+  'test-tool-02': {},
+  'test-tool-03': {},
+  'test-tool-04': { 'meta.json': '{"build": 42, "name": "demo"}' },
+  'test-tool-05': {},
+  'test-tool-06': {},
+  'test-tool-07': {},
+  'test-tool-08': { 'lines.txt': 'alpha\nbeta\ngamma\n' },
+  'test-tool-09': {},
+  'test-tool-10': { 'city.txt': '广州\n' },
+
+  'test-reas-01': {},
+  'test-reas-02': {},
+  'test-reas-03': {},
+  'test-reas-04': { 'trio.txt': '2\n3\n4\n' },
+  'test-reas-05': {},
+  'test-reas-06': {},
+  'test-reas-07': {},
+  'test-reas-08': { 'n.txt': '6\n' },
+  'test-reas-09': {},
+  'test-reas-10': {},
+
+  'test-code-01': {},
+  'test-code-02': {},
+  'test-code-03': {},
+  'test-code-04': {},
+  'test-code-05': {},
+  'test-code-06': {},
+  'test-code-07': {},
+  'test-code-08': {},
+  'test-code-09': {},
+  'test-code-10': {},
+}

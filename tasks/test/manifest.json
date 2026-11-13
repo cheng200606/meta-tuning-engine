@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "frozen": "2026-11-14",
+  "note": "test 保留集（M3 结束前只跑一次）。30 个任务独立构造，不复用 dev/g0 任务或其变体；数据源复用 G0 冻结数据表（packages/runner/src/data-tables.ts）。冻结 sha256 见 tasks/test/README.md。",
+  "tasks": [
+    { "id": "test-tool-01", "category": "tool", "instruction": "读取 stock.txt，回答 pear 的数量（只回答数字）。", "fixtures": ["stock.txt 两行：apple: 12；pear: 30"], "tools_expected": ["read_file"], "expected": "答案含 30" },
+    { "id": "test-tool-02", "category": "tool", "instruction": "向 status.txt 写入文本 delivered。", "fixtures": [], "tools_expected": ["write_file"], "expected": "status.txt 内容等于 delivered" },
+    { "id": "test-tool-03", "category": "tool", "instruction": "查询上海今天的气温，把气温数值写入 sh_temp.txt。", "fixtures": ["天气表：上海今日 12℃"], "tools_expected": ["get_weather", "write_file"], "expected": "sh_temp.txt 内容等于 12" },
+    { "id": "test-tool-04", "category": "tool", "instruction": "列出目录，读取其中唯一的 .json 文件，回答其中 build 字段的值。", "fixtures": ["meta.json：{\"build\": 42, \"name\": \"demo\"}"], "tools_expected": ["list_dir", "read_file"], "expected": "答案含 42" },
+    { "id": "test-tool-05", "category": "tool", "instruction": "用 calculate 计算 15*4-10 的值，把结果写入 r50.txt。", "fixtures": [], "tools_expected": ["calculate", "write_file"], "expected": "r50.txt 内容等于 50" },
+    { "id": "test-tool-06", "category": "tool", "instruction": "查询上海的人口，把人口数值写入 pop.txt。", "fixtures": ["城市表：上海 24870000"], "tools_expected": ["get_city_info", "write_file"], "expected": "pop.txt 内容等于 24870000" },
+    { "id": "test-tool-07", "category": "tool", "instruction": "查询客户 C001 的全部订单金额，把其中第二笔订单的金额写入 second_order.txt。", "fixtures": ["订单表：C001 = [300, 450, 300]"], "tools_expected": ["query_orders", "write_file"], "expected": "second_order.txt 内容等于 450" },
+    { "id": "test-tool-08", "category": "tool", "instruction": "读取 lines.txt，把其中最后一行的内容写入 last.txt。", "fixtures": ["lines.txt 三行：alpha、beta、gamma"], "tools_expected": ["read_file", "write_file"], "expected": "last.txt 内容等于 gamma" },
+    { "id": "test-tool-09", "category": "tool", "instruction": "用 calculate 计算 ((8+2)*3)/5 的值，把结果写入 six.txt。", "fixtures": [], "tools_expected": ["calculate", "write_file"], "expected": "six.txt 内容等于 6" },
+    { "id": "test-tool-10", "category": "tool", "instruction": "读取 city.txt 中的城市名，查询该城市今天的气温，把气温数值写入 temp_of_city.txt。", "fixtures": ["city.txt 内容：广州；天气表：广州今日 24℃"], "tools_expected": ["read_file", "get_weather", "write_file"], "expected": "temp_of_city.txt 内容等于 24" },
+
+    { "id": "test-reas-01", "category": "reasoning", "instruction": "查询北京和广州今天的气温，回答两地温差（广州减北京，只回答数字）。", "fixtures": ["天气表：北京 5℃，广州 24℃"], "tools_expected": ["get_weather", "calculate"], "expected": "答案含 19" },
+    { "id": "test-reas-02", "category": "reasoning", "instruction": "查询客户 C001 的全部订单金额，回答其中最小的单笔金额（只回答数字）。", "fixtures": ["订单表：C001 = [300, 450, 300]"], "tools_expected": ["query_orders"], "expected": "答案含 300" },
+    { "id": "test-reas-03", "category": "reasoning", "instruction": "查询上海和杭州的人口，判断上海人口是否超过杭州人口的 1.5 倍，回答 yes 或 no。", "fixtures": ["城市表：上海 24870000；杭州 12520000"], "tools_expected": ["get_city_info", "calculate"], "expected": "答案含 yes" },
+    { "id": "test-reas-04", "category": "reasoning", "instruction": "读取 trio.txt 中的三个数字，用 calculate 计算三数乘积，把乘积写入 product.txt。", "fixtures": ["trio.txt 三行：2、3、4（乘积 24）"], "tools_expected": ["read_file", "calculate", "write_file"], "expected": "product.txt 内容等于 24" },
+    { "id": "test-reas-05", "category": "reasoning", "instruction": "查询北京、上海、广州今天的气温，回答气温在 10℃ 到 20℃ 之间（含边界）的城市，直接给出城市名。", "fixtures": ["天气表：北京 5℃；上海 12℃；广州 24℃"], "tools_expected": ["get_weather"], "expected": "答案含 上海" },
+    { "id": "test-reas-06", "category": "reasoning", "instruction": "查询客户 C001 的全部订单金额，判断第一笔与第二笔之和是否大于第三笔，回答 yes 或 no。", "fixtures": ["订单表：C001 = [300, 450, 300]"], "tools_expected": ["query_orders", "calculate"], "expected": "答案含 yes" },
+    { "id": "test-reas-07", "category": "reasoning", "instruction": "查询上海和杭州的人口，回答人口较多的城市所属的省份名。", "fixtures": ["城市表：上海 24870000（省 上海）；杭州 12520000（省 浙江）"], "tools_expected": ["get_city_info"], "expected": "答案含 上海" },
+    { "id": "test-reas-08", "category": "reasoning", "instruction": "读取 n.txt 中的数字，用 calculate 计算它的平方，把结果写入 square.txt。", "fixtures": ["n.txt：6（平方 36）"], "tools_expected": ["read_file", "calculate", "write_file"], "expected": "square.txt 内容等于 36" },
+    { "id": "test-reas-09", "category": "reasoning", "instruction": "查询客户 C001 的全部订单金额并计算平均单笔金额，判断平均值是否低于 400，回答 yes 或 no。", "fixtures": ["订单表：C001 = [300, 450, 300]（平均 350）"], "tools_expected": ["query_orders", "calculate"], "expected": "答案含 yes" },
+    { "id": "test-reas-10", "category": "reasoning", "instruction": "查询北京、上海、广州今天的气温，按从暖到冷排序，回答气温第二高的城市，直接给出城市名。", "fixtures": ["天气表：北京 5℃；上海 12℃；广州 24℃"], "tools_expected": ["get_weather"], "expected": "答案含 上海" },
+
+    { "id": "test-code-01", "category": "code", "instruction": "编写 JavaScript 函数 sumRange(a, b)，返回 a 到 b 之间（含端点）所有整数的和；若 a > b 返回 0。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：(1,3)→6；(2,2)→2；(4,2)→0" },
+    { "id": "test-code-02", "category": "code", "instruction": "编写 JavaScript 函数 countChar(s, ch)，返回字符 ch 在字符串 s 中出现的次数。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：('banana','a')→3；('bbb','a')→0；('','a')→0" },
+    { "id": "test-code-03", "category": "code", "instruction": "编写 JavaScript 函数 minMax(numbers)，返回 [最小值, 最大值] 数组。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：([4,1,9])→[1,9]；([7])→[7,7]；([2,2])→[2,2]（用 JSON.stringify 比较）" },
+    { "id": "test-code-04", "category": "code", "instruction": "编写 JavaScript 函数 isEven(n)，n 为偶数时返回 true，否则返回 false。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：(4)→true；(7)→false；(0)→true" },
+    { "id": "test-code-05", "category": "code", "instruction": "编写 JavaScript 函数 firstWord(s)，去掉前导空白后返回第一个单词。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：('hello world')→'hello'；('solo')→'solo'；('  lead')→'lead'" },
+    { "id": "test-code-06", "category": "code", "instruction": "编写 JavaScript 函数 dupCount(numbers)，返回出现次数大于 1 的不同数值的个数。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：([1,2,2,3,3,3])→2；([1,2])→0；([])→0" },
+    { "id": "test-code-07", "category": "code", "instruction": "编写 JavaScript 函数 swapCase(s)，把每个字母的大小写互换（非字母不变）。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：('aBc')→'AbC'；('X')→'x'；('123')→'123'" },
+    { "id": "test-code-08", "category": "code", "instruction": "编写 JavaScript 函数 lastN(numbers, n)，返回数组末尾 n 个元素组成的新数组（不足 n 个返回全部）。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：([1,2,3,4],2)→[3,4]；([1],3)→[1]；([],1)→[]（用 JSON.stringify 比较）" },
+    { "id": "test-code-09", "category": "code", "instruction": "编写 JavaScript 函数 digitSum(n)，返回非负整数 n 的各位数字之和。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：(123)→6；(0)→0；(907)→16" },
+    { "id": "test-code-10", "category": "code", "instruction": "编写 JavaScript 函数 padZeros(s, len)，长度不足 len 时在左侧补 0，足够长则原样返回。将完整函数代码写入 solution.js。", "fixtures": [], "tools_expected": ["write_file", "run_js"], "expected": "run_js 3 组断言全过：('7',3)==='007'；('42',2)==='42'；('',3)==='000'" }
+  ]
+}
