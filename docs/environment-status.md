@@ -39,3 +39,4 @@
 
 - https://github.com/cheng200606/meta-tuning-engine（public，main）
 - 已推送：骨架 + G0 协议 + spike 结论 + preset 验证文件 + MIT LICENSE。
+| test 保留集冻结 | ✅ 2026-11-14 | 30 个独立任务（10/10/10）构造完成，90 正反例断言全绿；manifest sha256=bcafdca1…44ee 已记录于 tasks/test/README.md；纪律：M3 超参冻结后只跑一次。全套 162/162 测试 |
