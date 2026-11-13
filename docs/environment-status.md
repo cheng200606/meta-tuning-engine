@@ -1,6 +1,6 @@
-# 环境状态（M0）
+# 环境状态（M0 → M3 准备期）
 
-更新：2026-11-11 03:05。逐项以实测为准，完成后回填证据。
+更新：2026-11-13（迭代 2 回填；以下各行保留当时实测结论）。逐项以实测为准，完成后回填证据。
 
 **M1 提前完成项**：runner（ReAct 循环 + mock 工具 + 配置注入 + infra 重试）与 G0 流水线（scripts/run-g0.ts，含协议冻结校验、availability 门禁、C1/C2 自动计算）已实现，35/35 测试通过；密钥就绪即可跑冒烟。
 
@@ -23,6 +23,9 @@
 | M2 策略库+插件 | ✅ 2026-11-11 | policies.json 三基座 G0 最优配置入库；plugin-meta-controller 真实实现（策略库→preset→agent/created select）；scripts/verify-plugin.ts 无密钥端到端验证两基座 persona 注入通过；build/typecheck/35 测试全绿。范围：prompt_style 维度；parallel/reasoning 注入留 M2.1（preset 内禁放 agent-loop，需根部配置机制） |
 | M2.1 三维度注入 | ✅ 2026-11-12 | maxParallelToolCalls 经根部 agent-loop config 覆盖行（cordis Volatile 外部只读，overlay 生成器 overlay.ts 与插件同读一份 policies.json）；reasoning_effort 经 agent.model.select() 运行期注入（off 不干预）；verify-plugin.ts 三用例全绿（deepseek-v3/glm-4.5-air/合成 reasoning=low，断言首步实际生效值）；注入延迟 lookup 0.46–1.19ms、select ≈1ms（<100ms 目标达成）。关键坑：agent/pre-step 是 waterfall 事件，监听者必须转发 next()（dsh-spike.md §6） |
 | 一致性校验 DSH 侧通道 | ✅ 通道就绪（2026-11-12 冒烟） | g0-tools.ts 插件按路径复用 runner 的 MockTools（语义零漂移）+ FS 快照交接判定器；无密钥冒烟（g0-tool-04）全链路通过。**剩余：真实模型 6 任务 × 2 配置双通道对比（≤10pp 即 M2 出口）**；线格式与 session-title 计量注意事项见 dsh-spike.md §7 |
+| M2 出口一致性校验 | ✅ 2026-11-13 | 24 episode（deepseek-v3 × 6 任务 × 2 配置 × 双通道 × seed 0）：**runner vs DSH 完成率差 = 0（两配置完全一致），≤10pp 门禁通过，M2 正式完成**。残余失败项为两通道对称的已知判定语义（严格答案匹配、vm×CommonJS），非通道差异。诊断历程：run1/run2 根因 = 一致性 overlay 漏挂 g0-tools（模型改用 DSH 内置工具写真实沙箱）+ restrict 修复，三份报告留档于 experiments/2026-11-12-m2-consistency/；工具隔离与工具使用档案已固化进 g0-tools |
+| 迭代 1（halving / dev 6 / CI / 统计脚本） | ✅ 2026-11-13 | packages/search successive halving + 等预算随机对照（12 单测）、run-search CLI 骨架、dev 6 任务、GitHub Actions CI、analysis/g0_report.py（bootstrap 95% CI + 热力图，与 TS 口径交叉验证一致）；基线 53/53 测试通过 |
+| 迭代 2 · M3 零成本就绪 | ✅ 2026-11-13 | 修复 `--execute` 崩溃（原 `process.exit(Promise)` → Node `ERR_INVALID_ARG_TYPE`）；新增统一产物落盘器（三件套 + infra_error 中止/留痕 + 冻结/30任务/批准/密钥门禁 + `--self-test`）；dev 补齐 18/18 → 任务集 30/30；修复随机对照未采样配置以 0 分参与择优；基线 build/typecheck/72 测试全绿；dry-run 无缺口告警，self-test 双路径产物合规，全程零 API 消耗 |
 
 ## 本机网络要点（实测）
 
@@ -35,4 +38,4 @@
 ## 开源仓库
 
 - https://github.com/cheng200606/meta-tuning-engine（public，main）
-- 已推送：骨架 + G0 协议 + spike 结论 + preset 验证文件 + MIT LICENSE。| M2 出口一致性校验 | ✅ 2026-11-13 | 24 episode（deepseek-v3 × 6 任务 × 2 配置 × 双通道 × seed 0）：**runner vs DSH 完成率差 = 0（两个配置均完全一致），≤10pp 门禁通过，M2 正式完成**。残余失败项为两通道对称的已知判定语义（严格答案匹配、vm×CommonJS），非通道差异。诊断历程：run1/run2 失败根因 = 一致性 overlay 漏挂 g0-tools（模型改用 DSH 内置工具写真实沙箱）+ restrict 修复，修复过程三份报告留档于 experiments/2026-11-12-m2-consistency/；工具隔离（allow-list）与工具使用档案已固化进 g0-tools |
+- 已推送：骨架 + G0 协议 + spike 结论 + preset 验证文件 + MIT LICENSE。

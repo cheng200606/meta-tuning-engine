@@ -129,6 +129,21 @@ describe('successiveHalving', () => {
     expect(out.survivors.length).toBe(1)
     expect(Object.keys(out.scores).length).toBe(4)
   })
+
+  it('score_round 标注每个配置的最后评估轮次，scores 与该轮 cohort 分数一致', async () => {
+    const truth: Record<string, EpisodeMetrics> = {}
+    // 4 个配置分数严格可区分（避免平局并列保留），使第 0 轮确定淘汰 2 个
+    for (const [i, c] of CONFIGS.entries()) {
+      const cid = configId(c)
+      const steps = 4 - i
+      for (const t of ['t1', 't2']) for (const s of [0, 1]) truth[`${cid}|${t}|${s}`] = m(true, steps)
+    }
+    const out = await successiveHalving(spec(fakeRunner(truth).runner, 2, 0))
+    expect(out.score_round[out.best_config_id]).toBe(1)
+    const eliminated = Object.keys(out.score_round).filter((cid) => out.score_round[cid] === 0)
+    expect(eliminated).toHaveLength(2) // 只出现在第 0 轮的配置，分数来源轮次必须为 0
+    expect(out.scores[out.best_config_id]).toBeCloseTo(out.roundLog[1].scores[out.best_config_id], 10)
+  })
 })
 
 describe('equalBudgetRandom', () => {
@@ -210,12 +225,32 @@ describe('equalBudgetRandom', () => {
     expect(out.best_config_id).toBe(configId(CONFIGS[0]))
   })
 
-  it('equalBudgetRandom 预算为 0 时返回字典序首个配置', async () => {
+  it('equalBudgetRandom 预算为 0 时返回字典序首个配置，且全部标记为未评估', async () => {
     const rand = await equalBudgetRandom({
       baseId: 'x', configs: CONFIGS, runEpisode: fakeRunner({}).runner,
       budget: 0, tasks: tasks(['t1']), seeds: [0], rng: mulberry32(1),
     })
     expect(rand.episodes).toBe(0)
     expect(rand.best_config_id).toBe(configId(CONFIGS[0]))
+    expect(Object.keys(rand.scores)).toHaveLength(0)
+    expect(rand.unevaluated).toHaveLength(CONFIGS.length)
+  })
+
+  it('未采样配置不参与择优：观测为负分时不得凭空以 0 分胜出', async () => {
+    const configs = CONFIGS.slice(0, 2)
+    let n = 0
+    const runner: EpisodeRunner = async () => {
+      n += 1
+      const high = n % 2 === 0
+      return { success: false, tool_accuracy: 0, steps: high ? 10 : 1, cost: high ? 1000 : 100 }
+    }
+    const rand = await equalBudgetRandom({
+      baseId: 'x', configs, runEpisode: runner,
+      budget: 4, tasks: tasks(['t1']), seeds: [0], rng: () => 0, // 恒定采样第 0 个配置
+    })
+    expect(Object.keys(rand.scores)).toEqual([configId(configs[0])])
+    expect(rand.scores[configId(configs[0])]).toBeLessThan(0)
+    expect(rand.unevaluated).toEqual([configId(configs[1])])
+    expect(rand.best_config_id).toBe(configId(configs[0]))
   })
 })

@@ -50,7 +50,10 @@ export interface HalvingOutcome {
   base_id: string
   best: AgentConfig
   best_config_id: string
+  /** 每个配置「最后一次被评估轮次」的 cohort 内得分；跨轮归一化基准不同，不可直接横向比较。 */
   scores: Record<string, number>
+  /** scores 各项的来源轮次（配合 roundLog[r].scores 可精确复算，避免跨轮误读）。 */
+  score_round: Record<string, number>
   survivors: string[]
   roundLog: RoundLogEntry[]
   episodes: number
@@ -65,6 +68,8 @@ function cohortScore(episodes: Map<string, EpisodeMetrics[]>, weights: RewardWei
   const normCost = minMaxNormalizer(all.map((e) => e.cost))
   const scores: Record<string, number> = {}
   for (const [cid, eps] of episodes) {
+    // 未被采样的配置没有观测值，不能按 0 分参与择优（否则零观测反而可能胜过负分配置）。
+    if (eps.length === 0) continue
     const m: MetricMeans = {
       success_rate: mean(eps.map((e) => (e.success ? 1 : 0))),
       tool_accuracy: mean(eps.map((e) => e.tool_accuracy)),
@@ -103,6 +108,7 @@ export async function successiveHalving(spec: HalvingSpec): Promise<HalvingOutco
   const roundLog: RoundLogEntry[] = []
   let episodes = 0
   const totalScores: Record<string, number> = {}
+  const scoreRound: Record<string, number> = {}
 
   for (let r = 0; r < spec.rounds.length; r++) {
     const round = spec.rounds[r]
@@ -121,7 +127,7 @@ export async function successiveHalving(spec: HalvingSpec): Promise<HalvingOutco
       evaluated.set(cid, eps)
     }
     const scores = cohortScore(evaluated, weights)
-    for (const [cid, s] of Object.entries(scores)) totalScores[cid] = s
+    for (const [cid, s] of Object.entries(scores)) { totalScores[cid] = s; scoreRound[cid] = r }
     // 末轮仅在多轮赛制下取唯一冠军（确定性平局打破）；单轮搜索按 keep+margin 正常保留。
     const isFinal = r === spec.rounds.length - 1
     const kept = isFinal && spec.rounds.length > 1
@@ -137,6 +143,7 @@ export async function successiveHalving(spec: HalvingSpec): Promise<HalvingOutco
     best: byId.get(bestCid) as AgentConfig,
     best_config_id: bestCid,
     scores: totalScores,
+    score_round: scoreRound,
     survivors,
     roundLog,
     episodes,
@@ -158,7 +165,10 @@ export interface RandomOutcome {
   base_id: string
   best: AgentConfig
   best_config_id: string
+  /** 仅含实际被采样配置的得分；未被采样者不参与择优。 */
   scores: Record<string, number>
+  /** 本轮预算内一次都没被采样到的配置（透明留痕，供审计报告）。 */
+  unevaluated: string[]
   episodes: number
   /** 每配置实际获得的 episode 数（等预算下的采样记账）。 */
   samples: Record<string, number>
@@ -189,13 +199,21 @@ export async function equalBudgetRandom(spec: Omit<HalvingSpec, 'rounds' | 'marg
     episodes.get(cid)!.push(await spec.runEpisode(byId.get(cid) as AgentConfig, task.id, seed))
     samples[cid] += 1
   }
-  const scores = cohortScore(episodes, weights)
-  const bestCid = [...cids].sort((a, b) => (scores[b] ?? 0) - (scores[a] ?? 0) || a.localeCompare(b))[0]
+  // 只让「有观测值」的配置参与评分：未采样配置若按 0 分计入，
+  // 在全体观测为负分时会凭空成为冠军，使等预算对照失真。
+  const evaluated = new Map([...episodes].filter(([, eps]) => eps.length > 0))
+  const scores = cohortScore(evaluated, weights)
+  const sampledCids = [...evaluated.keys()]
+  // 零预算的退化情形：无观测可比，按字典序取首个并显式标注 unevaluated。
+  const bestCid = sampledCids.length === 0
+    ? [...cids].sort((a, b) => a.localeCompare(b))[0]
+    : [...sampledCids].sort((a, b) => (scores[b] ?? 0) - (scores[a] ?? 0) || a.localeCompare(b))[0]
   return {
     base_id: spec.baseId,
     best: byId.get(bestCid) as AgentConfig,
     best_config_id: bestCid,
     scores,
+    unevaluated: cids.filter((cid) => !evaluated.has(cid)),
     episodes: spec.budget,
     samples,
   }

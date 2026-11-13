@@ -5,7 +5,7 @@
 - 架构与论文定位：[../创新点.md](../创新点.md)
 - 执行方案（里程碑/预算/分工）：[../开发实验方案.md](../开发实验方案.md)
 - 迭代方案（当前-待办）：[docs/iteration-plan.md](docs/iteration-plan.md)
-- **当前状态：M2 正式完成（三维度注入 + 一致性校验 gap=0），进入 M3。进展明细以 [docs/environment-status.md](docs/environment-status.md) 为准。**
+- **当前状态：M2 正式完成，M3 准备期（跑批链路与 30 任务集已就绪；真实跑批待组长预算/超参冻结批准）。进展明细以 [docs/environment-status.md](docs/environment-status.md) 为准。**
 
 ## 结构
 
@@ -13,13 +13,13 @@
 packages/
   action-space/            配置 schema、校验、可用性裁剪、枚举（已实现 + 单测）
   runner/                  最小 ReAct 评测执行器（ReAct 循环 + mock 工具 + 配置注入 + infra 重试）
-  search/                  奖励函数 + successive halving 搜索 + 等预算随机对照（已实现 + 单测）
+  search/                  奖励函数 + successive halving 搜索 + 等预算随机对照 + 实验产物三件套落盘/校验（已实现 + 单测）
   policy-store/            策略库 JSON 读写（policies.json：三基座 G0 最优已入库）
   plugin-meta-controller/  DSH 元控制器插件（persona preset + agent/created select + reasoning 注入）
                            与 g0-tools（G0 mock 工具的 DSH 通道，供一致性校验）
 tasks/
   g0/                      12 个门禁任务（manifest 已冻结入协议）
-  dev/                     M3 搜索用任务集（当前 6/18 新任务，构造规范见其 README）
+  dev/                     M3 搜索用任务集（18/18 新任务 + g0 12 = 30，构造规范见其 README）
   test/                    保留集（M3 结束前冻结，只跑一次）
 configs/                   基座清单与可用性矩阵（实测填写）
 experiments/               每次运行一个目录，产物规范见其 README
@@ -35,7 +35,7 @@ vendor/deepseek-harness/   DSH 源码（gitignore，commit 锁定）
 # 前置：pnpm（corepack enable && corepack prepare pnpm@latest --activate）
 pnpm install
 pnpm build        # 拓扑序构建各包
-pnpm test         # vitest（50 用例：schema / 判定器自测 / runner / 搜索）
+pnpm test         # vitest（72 用例：schema / 判定器自测 / runner / 搜索 / 产物规范）
 pnpm typecheck    # 需先 build（workspace 依赖走 dist）
 
 # G0 实验（需 .env 密钥；协议已冻结，重跑前读 docs/g0-protocol.md §8）
@@ -49,6 +49,13 @@ node --import tsx/esm ../../scripts/verify-consistency-smoke.ts # 一致性通�
 
 # 一致性校验（真实模型，双通道 24 episode，M2 出口）
 node --env-file=.env --import tsx/esm scripts/run-consistency.ts   # 在仓库根执行
+
+# M3 配置搜索（零 API 验证，无需密钥）
+node --import tsx/esm scripts/run-search.ts --dry-run              # 配置/轮次/预算与门禁状态
+node --import tsx/esm scripts/run-search.ts --self-test            # 零 API 端到端验证产物三件套
+
+# M3 真实跑批（消耗预算！需组长批准标识 + .env 密钥；产物按三件套落盘）
+node --env-file=.env --import tsx/esm scripts/run-search.ts --execute --base deepseek-v3 --approval <批准标识>
 ```
 
 密钥放 `.env`（参考 `.env.example`），绝不提交。
@@ -59,4 +66,5 @@ node --env-file=.env --import tsx/esm scripts/run-consistency.ts   # 在仓库�
 2. test 任务集只跑一次（M3 超参冻结后）；
 3. experiments/ 产物必须带配置快照 + seed + commit hash；
 4. DSH 锁定 commit（docs/dsh-commit.lock），升级前跑回归；
-5. infra_error 不计入指标、禁止静默剔除（协议 §2）。
+5. infra_error 不计入指标、禁止静默剔除（协议 §2）；补跑仍失败 → 中止跑批并留痕；
+6. M3 真实跑批需 30 任务集、冻结校验通过、`--approval` 批准留痕与 `.env` 密钥，禁止无批准自动执行。

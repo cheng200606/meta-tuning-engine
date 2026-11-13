@@ -49,6 +49,102 @@
       "fixtures": [],
       "tools_expected": ["write_file", "run_js"],
       "expected": "run_js 加载 solution.js 后 3 组断言全过：('hello')→2；('XYZ')→0；('Audio')→4"
+    },
+    {
+      "id": "dev-tool-03",
+      "category": "tool",
+      "instruction": "列出当前目录，读取其中唯一的 .txt 文件，并回答该文件中 ticket 的值。",
+      "fixtures": ["notes.txt 内容：ticket=Q7-42"],
+      "tools_expected": ["list_dir", "read_file"],
+      "expected": "最终答案含 Q7-42"
+    },
+    {
+      "id": "dev-tool-04",
+      "category": "tool",
+      "instruction": "读取 expr.txt，用 calculate 计算其中算式的值，并把结果写入 calc.txt。",
+      "fixtures": ["expr.txt 内容：(12+8)*3（结果 60）"],
+      "tools_expected": ["read_file", "calculate", "write_file"],
+      "expected": "calc.txt 内容等于 60"
+    },
+    {
+      "id": "dev-tool-05",
+      "category": "tool",
+      "instruction": "查询客户 C001 的全部订单金额，用 calculate 求总额，并把总额写入 orders_total.txt。",
+      "fixtures": [],
+      "tools_expected": ["query_orders", "calculate", "write_file"],
+      "expected": "orders_total.txt 内容等于 1050"
+    },
+    {
+      "id": "dev-tool-06",
+      "category": "tool",
+      "instruction": "查询上海今天的天气。如果气温低于 15℃，向 heater.txt 写入 on，否则写入 off。",
+      "fixtures": ["天气表：上海今日 12℃"],
+      "tools_expected": ["get_weather", "write_file"],
+      "expected": "heater.txt 内容等于 on"
+    },
+    {
+      "id": "dev-reas-03",
+      "category": "reasoning",
+      "instruction": "查询北京、上海和广州今天的天气，回答气温最高的城市，直接给出该城市名。",
+      "fixtures": [],
+      "tools_expected": ["get_weather"],
+      "expected": "最终答案含广州"
+    },
+    {
+      "id": "dev-reas-04",
+      "category": "reasoning",
+      "instruction": "查询上海和杭州的人口，用 calculate 计算两地人口差值（大减小），并把差值写入 pop_diff.txt。",
+      "fixtures": [],
+      "tools_expected": ["get_city_info", "calculate", "write_file"],
+      "expected": "pop_diff.txt 内容等于 12350000"
+    },
+    {
+      "id": "dev-reas-05",
+      "category": "reasoning",
+      "instruction": "查询客户 C001 的全部订单金额并计算总额；若总额大于 1100，向 vip1100.txt 写入 yes，否则写入 no。",
+      "fixtures": [],
+      "tools_expected": ["query_orders", "calculate", "write_file"],
+      "expected": "vip1100.txt 内容等于 no"
+    },
+    {
+      "id": "dev-reas-06",
+      "category": "reasoning",
+      "instruction": "查询客户 C001 的全部订单金额，用 calculate 计算平均订单金额（总额除以订单数），并把平均值写入 order_avg.txt。",
+      "fixtures": [],
+      "tools_expected": ["query_orders", "calculate", "write_file"],
+      "expected": "order_avg.txt 内容等于 350"
+    },
+    {
+      "id": "dev-code-03",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 maxOf(numbers)，返回数组中的最大值。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file", "run_js"],
+      "expected": "run_js 3 组断言全过：([1,5,2])→5；([-3,-1])→-1；([7])→7"
+    },
+    {
+      "id": "dev-code-04",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 reverseString(s)，返回反转后的字符串。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file", "run_js"],
+      "expected": "run_js 3 组断言全过：('abc')→'cba'；('')→''；('Level')→'leveL'"
+    },
+    {
+      "id": "dev-code-05",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 isPrime(n)，n 为质数时返回 true，否则返回 false。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file", "run_js"],
+      "expected": "run_js 3 组断言全过：(2)→true；(9)→false；(1)→false"
+    },
+    {
+      "id": "dev-code-06",
+      "category": "code",
+      "instruction": "编写 JavaScript 函数 uniqueSorted(numbers)，返回去重后按升序排列的新数组。将完整函数代码写入 solution.js。",
+      "fixtures": [],
+      "tools_expected": ["write_file", "run_js"],
+      "expected": "run_js 3 组断言全过：([3,1,3,2])→[1,2,3]；([])→[]；([2,2])→[2]（用 JSON.stringify 比较）"
     }
   ]
 }

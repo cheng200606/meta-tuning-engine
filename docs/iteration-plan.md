@@ -69,3 +69,89 @@
 
 P0 → P1 → P3.1 → P2 → P3.2/3.3。本轮会话目标：P0 全部、P1 全部、P3.1；P2/P3 其余视时间推进。
 完成后的整体水平：M2 正式出口、M3 算法层就绪可测、CI 上线——从「实验跑通」到「工程可复用」。
+
+**迭代 1 收尾（2026-11-13 复核）**：P0/P1/P2/P3 全部落地；dev 任务集 6/18、CI（.github/workflows/ci.yml）、README 刷新、analysis/g0_report.py 均已入库；基线 53/53 测试通过。以下各节的「⏳」状态标记以本节为准。
+
+---
+
+# 迭代 2 · M3 零成本就绪（2026-11-13 制定并实施）
+
+> 目标：在不消耗任何 API 预算、不触碰任何冻结资产的前提下，让 M3 主实验「一键、合规、可复现」。
+> 依据：迭代 1 完成后审计发现，`--execute` 路径存在确定性崩溃与实验纪律违规，M3 尚不具备执行条件。
+
+## 现状审计（迭代 2 起点）
+
+| 维度 | 状态 |
+|---|---|
+| M0–M2 | ✅ 完成（G0 PASS；策略库 + 三维度注入；一致性校验 gap=0） |
+| 迭代 1 | ✅ 完成（halving 12 单测、dev 6 任务、CI、G0 统计脚本） |
+| 基线 | ✅ build / typecheck 通过，vitest 53/53 |
+| `scripts/run-search.ts --execute` | ❌ `process.exit(main())` 收到 Promise → Node 抛 `ERR_INVALID_ARG_TYPE`，跑批必然崩溃（实测） |
+| 实验产物规范 | ❌ 缺 `episodes.jsonl`；`report.json` 缺 seed / commit / token 汇总 |
+| infra_error 纪律 | ❌ `success === 'infra_error'` 被静默当作失败计入指标（违反协议 §2） |
+| 前置门禁 | ❌ 任务集不足 30 仍可跑、无冻结校验、无预算批准留痕 |
+| dev / test 任务集 | ⚠ dev 18/30（g0 12 + dev 6）；test 为空（须 M3 超参冻结前独立构造） |
+| 搜索算法 | ⚠ `equalBudgetRandom` 未采样配置以 0 分参与择优；`scores` 跨轮 cohort 混合不可比 |
+| 文档治理 | ⚠ README 测试数滞后（50 vs 53）；environment-status 表格错行；G0 决议正式签字待补 |
+
+## 优先级与任务
+
+| 优先级 | 任务 | 关键改动点 |
+|---|---|---|
+| **P0** | M3 跑批执行链修复与合规门禁 | `scripts/run-search.ts` 重写执行路径；新增 `packages/search/src/artifacts.ts` 统一三件套落盘 |
+| **P1** | dev 任务集补齐 18/30 | `tasks/dev/` 新增 12 任务（tool/reasoning/code 各 4）+ 判定器 + 正反例自测 |
+| **P2** | 搜索算法正确性 | `halving.ts`：未采样配置不计分；`scores` 语义标注 + 来源轮次；补单测 |
+| **P3** | 文档与治理同步 | iteration-plan、environment-status（修错行）、README、tasks/dev/README |
+
+## P0 详细规格
+
+1. `main()` 改 async，出口用 `process.exitCode`，**禁止 `process.exit(Promise)`**；
+2. 新增 `createArtifactWriter()`：写 `config.snapshot.json`（协议引用、g0/dev manifest hash、temperature、maxSteps、seeds、margin、weights、commit、approval）、逐行 append `episodes.jsonl`（schema = EpisodeRecord）、汇总 `report.json`（status、seed、commit、tokens、infra_errors、result）；
+3. `infra_error` 按协议 §2：补跑一次并留痕；补跑仍失败 → **中止跑批**、`report.status = aborted_infra_error`、退出码非 0，绝不静默剔除或计入指标；
+4. `--execute` 前置门禁（任一不满足即拒绝且不创建产物目录）：g0 manifest sha256 与冻结协议一致、`allTasks.length ≥ 30`、availability 已实测、`--approval <id>` 组长预算/超参冻结批准留痕、`.env` 密钥存在；
+5. 新增 `--self-test`：注入确定性假 runner，零 API 端到端跑通三件套 + 一致性校验，产物写 `analysis/out/`（已 gitignore）；覆盖 halving 与 random 两条路径。
+
+## P1 详细规格
+
+- 新增 dev-tool-03..06、dev-reas-03..06、dev-code-03..06，共 12 个；沿用 G0 冻结数据表与 8 个 mock 工具；
+- 判定器只用 `fileEquals` / `answerIncludes` / `codeChecker`；每任务正反例（含缺文件）自测先于入库；
+- 不修改 `tasks/g0/**`、`configs/availability.yaml`、`policies.json`、`docs/g0-protocol.md`。
+
+## 验收标准
+
+1. `pnpm build && pnpm typecheck && pnpm test` 全绿，测试数 ≥ 65（新增 12 任务自测 + 算法/产物单测）；
+2. `node --import tsx/esm scripts/run-search.ts --dry-run` 输出 27 配置 / 30 任务且**无任务缺口告警**；
+3. `--self-test` 零 API 产出三件套，`episodes.jsonl` 行数 = `report.result.episodes`，必填字段齐全；
+4. `--execute` 在缺批准 / 缺密钥 / 任务集不足时干净拒绝（不生成脏产物目录）；
+5. 冻结资产零变更：`sha256sum tasks/g0/tasks.manifest.json` = `43059cb4…1004`；test 集仍为空且未运行；
+6. 全程零 API 调用、零预算消耗。
+
+## 范围外（明确本轮不做）
+
+- M3 真实跑批、8 项基线、test 集一次运行（需组长批准 + 超参冻结 + 预算确认）；
+- run_js CommonJS shim 与严格答案匹配修订（涉及任务环境/判定语义，须走协议 §8 偏离流程）；
+- G0 决议正式签字（治理动作，需组长本人）；
+- M4 发布、M5 微调。
+
+## 迭代 2 实施结果（2026-11-13）
+
+| 验收项 | 结果 |
+|---|---|
+| build / typecheck / test | ✅ 全绿；vitest **72/72**（原 53 → +12 dev 判定器自测、+5 产物规范、+2 算法回归） |
+| dry-run | ✅ 27 合法配置、30 任务、零缺口告警；预计 648 episode/基座（27×6×1 + 9×12×2 + 3×30×3） |
+| --self-test | ✅ halving 与 random 两条路径各 4 episode，三件套齐全、行数与 report 一致、PASS（exit 0，零 API） |
+| --execute 门禁 | ✅ 缺 `--approval` → exit 1；缺 `.env` 密钥 → exit 1；均不创建产物目录；experiments/ 无新增脏目录 |
+| 冻结资产 | ✅ `tasks/g0/tasks.manifest.json` sha256 仍为 `43059cb4…1004`；协议/availability/policies/test 集零改动 |
+| API 消耗 | ✅ 0（全程未加载 `.env`） |
+
+**关键决策记录**
+
+1. **原 `--execute` 崩溃根因**：`process.exit(main())` 在异步分支收到 Promise，Node 抛 `TypeError [ERR_INVALID_ARG_TYPE]`（实测复现）。改为 `main().then(code => process.exitCode = code)`，异常走 1。
+2. **infra_error 取「中止」而非「继续计入」**：补跑一次仍失败时写 `infra_error` episode 行 + `infra_errors` 清单 + `report.status = aborted_infra_error` + 退出码 2，等待组长决定补跑。比「当失败计入」更符合协议 §2 且不会污染搜索归因；补跑成功的原始 infra 原因另记入 `infra_reruns`，保证「禁止静默替换数据点」。
+3. **新增 `--approval` 与任务集门禁**：M3 超参尚未冻结、预算需组长确认，跑批前强制留痕；门禁在创建产物目录之前执行，避免半截产物。
+4. **随机对照修复**：未采样配置不再以 0 分参与择优（原实现在观测全为负时会凭空夺冠）；新增 `unevaluated` 透明留痕，`score_round` 标注 halving 分数来源轮次以消除跨轮误读。
+5. **dev 任务设计**：复用 G0 冻结数据表，代码任务统一「全局函数 + solution.js + run_js 断言」，规避 G0 已知的 `vm × CommonJS` 失败模式；每任务正例/反例/缺文件三断言。
+6. **self-test 产物写 `analysis/out/`**（已 gitignore），不污染 experiments/ 的正式实验记录。
+
+**下一迭代候选（按序）**：① 构造并冻结 test 集（≥30 个独立任务，不运行）；② 冻结 M3 超参（奖励权重敏感性、halving 裕量、seed 与预算）并写入协议级文档；③ 组长批准后执行 M3 全量搜索与 8 项基线；④ 处理 run_js CommonJS shim（须走协议 §8 偏离）；⑤ 补 G0 决议正式签字。
+
