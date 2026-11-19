@@ -1,11 +1,11 @@
 # meta-tuning-engine
 
-基座感知型 Agent 元控制器：离线配置搜索 + 策略库 + DSH 注入插件（进阶期：轻量摊销预测）。
+基座感知型 Agent 元控制器：离线配置搜索 + 策略库 + DSH 注入插件（**G0 v1.1 决议后定位修订：Agent 配置自动优化实证 + 门禁方法论；画像预测线与 M5 已按预注册规则取消**）。
 
-- 架构与论文定位：[../创新点.md](../创新点.md)
+- 架构与论文定位：[../创新点.md](../创新点.md)（主张修订待更新）
 - 执行方案（里程碑/预算/分工）：[../开发实验方案.md](../开发实验方案.md)
 - 迭代方案（当前-待办）：[docs/iteration-plan.md](docs/iteration-plan.md)
-- **当前状态：M2 正式完成，M3 准备期（跑批链路与 30 任务集已就绪；真实跑批待组长预算/超参冻结批准）。进展明细以 [docs/environment-status.md](docs/environment-status.md) 为准。**
+- **当前状态：G0 v1.1 重跑完成（648 episode，判定语义健壮化后）——C1 配置敏感性成立（3/3 基座），C2 跨基座差异化不成立（delta 0.0139 < 0.03）→ 预注册决策 DOWNGRADE（砍画像预测线与 M5）。决议：[docs/g0-decision-v11.md](docs/g0-decision-v11.md)；审计：[docs/g0-measurement-audit.md](docs/g0-measurement-audit.md)；明细见 [docs/environment-status.md](docs/environment-status.md)。**
 
 ## 结构
 
