@@ -41,3 +41,4 @@
 - 已推送：骨架 + G0 协议 + spike 结论 + preset 验证文件 + MIT LICENSE。
 | test 保留集冻结 | ✅ 2026-11-14 | 30 个独立任务（10/10/10）构造完成，90 正反例断言全绿；manifest sha256=bcafdca1…44ee 已记录于 tasks/test/README.md；纪律：M3 超参冻结后只跑一次。全套 162/162 测试 |
 | DEV-01 判定器健壮化 + CommonJS 垫片 | ⏳ 代码完成，待批准重测（2026-11-19） | 判定器改语义等价匹配（answer-normalize.ts + answerYesNo/answerNumber/answerIncludesAny）+ run_js CommonJS 垫片（module.exports 兼容）；182/182 测试绿，冻结资产 sha256 未变；偏离单 docs/m3-deviation-01-judger-robustness.md；重测预算：诊断 162 episode ≈¥13 → 全量 648 episode ≈¥51。**预期 C2 仍不通过（点估计 0.000–0.028 < 0.03）——我们是为了知道真相，不是挽救结论** |
+| GitHub 推送备用通道 | ✅ 2026-11-19 | github.com:443 不可用（时通时断，代理 7892 虽在监听但经其连 github 失败）而 api.github.com 直连可用 → 新增 scripts/push-via-api.ts：走 Git Data API 重建提交（tree/parent/author/committer/message 与本地完全一致 → API 返回相同 SHA，推送后仍 fast-forward）。踩坑：日期必须保留原始时区偏移（+08:00 非 Z）、message 必须保留结尾换行，否则 commit SHA 不一致。凭据取自 git-credential-manager，不落盘 |
