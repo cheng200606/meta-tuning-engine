@@ -1,5 +1,9 @@
 // G0 判定器：标准冻结于 tasks.manifest.json 的 expected；本文件实现不得偏离。
-import { answerIncludes, fail, fileEquals, ok, type Checker, type EpisodeOutcome } from '../env/checker-types.ts'
+// M3 偏离单 DEV-01：匹配方式从「严格字符串相等」改为「语义等价匹配」（answerIncludes /
+// answerYesNo / answerNumber），任务指令与 expected 语义不变。
+// 理由：G0 审计发现严格匹配把「答案含 yes 但不严格等于 yes」判为失败（18 集），
+// 且该假象与 prompt_style 强相关，足以伪造配置敏感性（delta 5.6pp → 2.8pp）。
+import { answerIncludes, answerIncludesAny, answerNumber, answerYesNo, fail, fileEquals, ok, type Checker, type EpisodeOutcome } from '../env/checker-types.ts'
 import { runJsAssertions } from '../../../packages/runner/src/run-js.ts'
 
 function solution(outcome: EpisodeOutcome): string | null {
@@ -22,17 +26,12 @@ export const checkers: Record<string, Checker> = {
   'g0-tool-01': (o) => fileEquals(o, 'result.txt', '1500'),
   'g0-tool-02': (o) => fileEquals(o, 'coat.txt', 'yes'),
   'g0-tool-03': (o) => answerIncludes(o, 'ORD-2026-0042'),
-  'g0-tool-04': (o) => {
-    const answer = o.finalAnswer.trim()
-    return answer === '37.0' || answer === '37' ? ok() : fail(`expected 37.0 or 37, got ${JSON.stringify(answer)}`)
-  },
+  'g0-tool-04': (o) => answerNumber(o, 37),
   'g0-reas-01': (o) => {
-    if (!o.finalAnswer.includes('上海')) return fail('answer missing 上海')
-    return o.finalAnswer.includes('12350000') || o.finalAnswer.includes('1235万')
-      ? ok()
-      : fail('answer missing 12350000 / 1235万')
+    if (!answerIncludes(o, '上海').pass) return fail('answer missing 上海')
+    return answerIncludesAny(o, '12350000', '1235万').pass ? ok() : fail('answer missing 12350000 / 1235万')
   },
-  'g0-reas-02': (o) => (o.finalAnswer.trim().toLowerCase() === 'yes' ? ok() : fail(`expected yes, got ${JSON.stringify(o.finalAnswer.trim())}`)),
+  'g0-reas-02': (o) => answerYesNo(o, 'yes'),
   'g0-reas-03': (o) => answerIncludes(o, '广州'),
   'g0-reas-04': (o) => fileEquals(o, 'result.txt', '17'),
   'g0-code-01': codeChecker([

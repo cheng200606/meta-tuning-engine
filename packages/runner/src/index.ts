@@ -36,6 +36,8 @@ export interface EpisodeRecord {
   latency_ms: number
   failure_reason: string | null
   trace_path: string | null
+  /** 模型的最终回答原文（M3 偏离单 DEV-01 新增：审计可直接复核判定，不必从 failure_reason 反解）。 */
+  final_answer?: string | null
 }
 
 export const MAX_STEPS = 10
@@ -154,10 +156,12 @@ export async function runEpisode(
       if (step === maxSteps - 1) record.failure_reason = 'max_steps'
     }
     if (record.failure_reason === null) {
+      // 判定器内部做语义等价匹配（DEV-01），此处传入原文
       const verdict = check(tools.fs, finalAnswer)
       record.success = verdict.pass
       if (!verdict.pass) record.failure_reason = verdict.reason
     }
+    record.final_answer = finalAnswer
   } catch (error) {
     const text = error instanceof Error ? error.message : String(error)
     record.success = text.startsWith('infra:') ? 'infra_error' : false

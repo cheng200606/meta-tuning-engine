@@ -1,6 +1,8 @@
 // test 保留集判定器：expected 以 tasks/test/manifest.json 为准（已冻结）。
 // 复用 g0 checker-types 公共断言与 codeChecker 模式；与 dev/g0 任务零语义重叠。
-import { answerIncludes, fail, fileEquals, ok, type Checker, type EpisodeOutcome } from '../../g0/env/checker-types.ts'
+// M3 偏离单 DEV-01：yes/no 与数值判定改用共享的健壮断言（answerYesNo / answerNumber），
+// 任务定义与 expected 语义不变（manifest sha256 不变）。
+import { answerIncludes, answerNumber, answerYesNo, fail, fileEquals, ok, type Checker, type EpisodeOutcome } from '../../g0/env/checker-types.ts'
 import { runJsAssertions } from '../../../packages/runner/src/run-js.ts'
 
 function solution(outcome: EpisodeOutcome): string | null {
@@ -19,13 +21,8 @@ function codeChecker(assertions: string[]): Checker {
   }
 }
 
-function numAnswer(outcome: EpisodeOutcome, expected: string): { pass: boolean; reason: string } {
-  return outcome.finalAnswer.includes(expected) ? ok() : fail(`answer missing ${expected}`)
-}
-
-function yesNo(outcome: EpisodeOutcome, expected: 'yes' | 'no'): { pass: boolean; reason: string } {
-  return outcome.finalAnswer.toLowerCase().includes(expected) ? ok() : fail(`answer missing ${expected}`)
-}
+const numAnswer = (outcome: EpisodeOutcome, expected: string): { pass: boolean; reason: string } => answerIncludes(outcome, expected)
+const yesNo = (outcome: EpisodeOutcome, expected: 'yes' | 'no'): { pass: boolean; reason: string } => answerYesNo(outcome, expected)
 
 export const checkers: Record<string, Checker> = {
   'test-tool-01': (o) => numAnswer(o, '30'),

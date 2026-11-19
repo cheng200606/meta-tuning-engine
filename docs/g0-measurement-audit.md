@@ -1,57 +1,70 @@
-# G0 测量效度审计（2026-11-19）
+# G0 测量效度审计（2026-11-19，修订版）
 
 > 触发：向导师汇报前的自审。问题——G0 的头条结论（delta=5.6pp，C2 通过）有多少来自**与配置质量无关的测量假象**？
-> 复算脚本：`analysis/g0_artifact_sensitivity.mjs`（零 API，直接重算已冻结的 648 episode）。
+> 复算脚本：`analysis/g0_artifact_sensitivity.ts`（零 API，直接重算已冻结的 648 episode）。
+> **修订说明**：初版把全部 36 例 `expected yes, got ...` 记为格式假象；复核发现其中 18 例模型**根本没作答**（答案是空串），
+> 属真实失败。真格式假象仅 18 例。初版给出的「delta → 0.0000」口径因此偏严，本文为修正后的准确版本。
 
 ## 1. 失败分类（合并口径，648 集）
 
 | 类别 | 数量 | 占比 | 性质 |
 |---|---|---|---|
 | pass | 416 | 64.2% | — |
-| content_missing（答案/文件缺关键内容） | 85 | 13.1% | 实质失败 |
-| other（solution.js missing 等指令遵循失败） | 56 | 8.6% | 实质失败 |
-| **format_artifact**（答案含 `yes` 但不严格等于 `yes`） | 36 | 5.6% | **测量假象** |
-| **env_artifact**（`vm error: module is not defined`） | 31 | 4.8% | **测量假象** |
-| max_steps | 20 | 3.1% | 实质失败 |
-| format_artifact_empty（空答案） | 4 | 0.6% | 实质失败 |
+| substantive（答案/文件缺关键内容、指令未遵循、超步数） | 161 | 24.8% | 实质失败 |
+| env_artifact（`vm error: module is not defined`） | 31 | 4.8% | **测量假象** |
+| empty_answer（模型未作答） | 22 | 3.4% | 实质失败 |
+| format_artifact（答案含 yes 但不严格等于 yes） | 18 | 2.8% | **测量假象** |
 
-## 2. 假象集中在两个任务，且与 prompt_style 强相关
+## 2. 假象的机制与分布
 
-| 任务 | artifact 占比 | 机制 |
+- **格式假象**：`g0-reas-02` 判定要求 `finalAnswer.trim().toLowerCase() === 'yes'`；模型答「**结论：yes**」「总额 1050 元 ≥ 1000 元。**yes**」即判失败。
+- **环境假象**：模型按 Node 习惯写 `module.exports = ...`，node:vm 沙箱无 `module` 全局 → ReferenceError。
+
+因果链：**prompt_style → 回答冗长度 / 代码导出风格 → 判定器或沙箱兼容性 → 完成率**。这不是「配置影响任务能力」，是「配置影响格式合规性」。
+
+artifact 率在 9 个配置上的分布（648 集实测）：
+
+| 基座 | artifact 率 | 解读 |
 |---|---|---|
-| g0-reas-02 | **67%（36/54）** | 判定器要求 `finalAnswer.trim().toLowerCase() === 'yes'`；模型答「**结论：yes**」「总额 = 1050 元 ≥ 1000 元，**yes**」即判失败 |
-| g0-code-01 | 30% | 模型按 CommonJS 习惯 `module.exports = ...`，node:vm 沙箱无该全局 → ReferenceError |
-| g0-code-02 | 24% | 同上 |
+| qwen3-8b | 全部配置 **0.00** | 其 gap 0.167 是**干净的真实配置敏感性** |
+| deepseek-v3 | 0.08（sbs-p3/constrained-p3）～ 0.25（concise-p1） | 与成功率梯度反向 → gap 部分为真（修后 0.125） |
+| glm-4.5-air | concise 0.00，step_by_step 0.13–0.17 | 其「偏好 concise」**几乎全是 artifact 梯度**（修后 gap 0.000） |
 
-因果链：**prompt_style → 回答冗长度 / 代码导出风格 → 判定器或沙箱的兼容性 → 完成率**。这不是「配置影响任务能力」，是「配置影响格式合规性」。
-
-## 3. 敏感性重算（判据是否稳健）
+## 3. 三档敏感性（判据是否稳健）
 
 | 口径 | gap(deepseek) | gap(qwen) | gap(glm) | delta | C1 | C2 |
 |---|---|---|---|---|---|---|
-| 原样（artifact 记为失败） | 0.250 | 0.167 | 0.167 | 0.0556 | ✅ | ✅ |
-| **乐观（artifact 记为成功）** | 0.125 | 0.167 | **0.000** | **0.0000** | ✅ | ❌ |
+| S0 原样（artifact 记为失败） | 0.250 | 0.167 | 0.167 | 0.0556 | ✅ | ✅ |
+| S1 仅判定器健壮化 | 0.250 | 0.167 | 0.083 | **0.0278** | ✅ | ❌ |
+| S2 判定器 + CommonJS 垫片（上界） | 0.125 | 0.167 | **0.000** | **0.0000** | ✅ | ❌ |
 
-**结论：C2（差异化前提，delta≥0.03）在宽松判定下归零，C2 不稳健。** 若把假象全部原谅，GLM 的配置敏感性完全消失（gap 0.167→0.000），c_global 也从 step_by_step-p3 变为 step_by_step-p1。
+**结论：C2（差异化前提，delta ≥ 0.03）在两种修复口径下均不成立。** S1 的 0.0278 紧贴阈值下方，S2 归零。
+
+> 重要限定：S1/S2 是**用原轨迹重算**的敏感性分析，不是重跑结果——重跑后模型行为会变（新的轨迹），真实数值须由重测给出。
 
 ## 4. 哪些结论仍然站得住
 
 | 结论 | 稳健性 | 依据 |
 |---|---|---|
-| **C1 配置敏感性成立**（≥2 基座 gap≥10pp） | 稳健 | 乐观口径下 deepseek 0.125、qwen 0.167 仍 ≥0.10；qwen 的 artifact 率在 9 个配置上恒为 8%（均匀），其 gap 是 artifact-clean 的 |
-| 「基座最优配置不同」 | **不稳健** | 乐观口径 delta=0，GLM 的「concise 更优」主要来自它更少触发 artifact |
-| 「delta = 5.6pp」这个数值 | **不可引用** | 依赖 artifact 记账方式 |
-| 工程链路（runner≡DSH、注入延迟、搜索器、协议纪律） | 稳健 | 与判定语义无关 |
+| **C1 配置敏感性成立**（≥2 基座 gap ≥ 10pp） | 稳健 | 修复口径下 deepseek 0.125–0.250、qwen 0.167 均 ≥ 0.10；qwen artifact 率恒为 0，其 gap 是干净的 |
+| 「配置影响任务完成率」 | 稳健 | 同上（qwen 证据最干净） |
+| 「基座最优配置不同」 | **不稳健** | 修复后 delta ≤ 0.028 < 0.03；GLM 的「偏好 concise」主要是 artifact 梯度 |
+| 「delta = 5.6pp」这个数值 | **不可引用** | 依赖 artifact 记账方式；真实值待重测 |
+| 工程链路（runner ≡ DSH gap=0、注入延迟 <1.2ms、搜索器、协议纪律） | 稳健 | 与判定语义无关 |
 
-## 5. 必须做的事（M3 之前）
+## 5. 已采取的动作
 
-1. **判定器健壮化**：答案匹配改为归一化（剥离 markdown 强调/代码块/空白/全角标点 + 提取首个 yes/no/数值 token）；属于**任务环境变更**，按协议 §8 走偏离流程（G0 数据作废重跑，或声明 G0 仅作 kill-test、结论以 M3 为准）。
-2. **run_js CommonJS shim**：支持 `module.exports` / `exports.x`（同样是任务环境变更，同一偏离单）。
-3. **G0 结论的对外表述**：对外只能说「C1 成立；C2 在当前判定语义下不稳健，修复后重测」——不能说「PASS → M2 的差异化前提已被证实」。M2 的插件工程价值不受影响（它不依赖 G0 的 C2）。
-4. **可选的论文角度**：「prompt style 会系统性改变代码导出约定，进而与工具沙箱的兼容性耦合」本身是一个真实、可写的观察（失败分析章节的素材），而非单纯的噪声。
+- 偏离单 **DEV-01**（docs/m3-deviation-01-judger-robustness.md）：判定器健壮化 + run_js CommonJS 垫片，代码已实现、182/182 测试通过；
+- 两阶段重测方案（诊断跑 162 episode ≈¥13 → 全量 648 episode ≈¥51），**待组长批准预算**；
+- 对外表述口径：只能说「C1 成立；C2 在当前判定语义下不稳健，修复后重测」，不能说「PASS → 基座感知前提已被证实」。M2 的工程结论不受影响（不依赖 C2）。
 
-## 6. 复现
+## 6. 可写进论文的副产品
+
+「prompt style 会系统性改变模型的代码导出约定与回答冗长度，进而与工具沙箱/判定器的兼容性耦合」——这是一个真实、可测、且有失败分析价值的观察（当前数据已给出定量证据：glm 的 artifact 率从 concise 的 0.00 升到 step_by_step 的 0.17）。它不挽救 C2，但可作为论文的 failure analysis 章节素材，甚至是一个独立的次级贡献。
+
+## 7. 复现
 
 ```bash
-node analysis/g0_artifact_sensitivity.mjs
+node --import tsx/esm analysis/g0_artifact_sensitivity.ts   # 三档敏感性
+node --import tsx/esm analysis/dev01_validate.ts            # 修复对真实假象样本的改判验证
 ```
