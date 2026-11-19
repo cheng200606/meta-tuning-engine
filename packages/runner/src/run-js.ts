@@ -42,8 +42,14 @@ function assertedCallables(assertions: string[]): string[] {
 export function runJsAssertions(code: string, assertions: string[]): { pass: boolean; reason: string } {
   const context = vm.createContext({})
   try {
-    // 阶段 0：CommonJS 垫片（var 声明在全局作用域，模型代码可直接使用 module/exports）
-    vm.runInContext('var module = { exports: {} }; var exports = module.exports;', context)
+    // 阶段 0：CommonJS 垫片（var 声明在全局作用域，模型代码可直接使用 module/exports）。
+    // require 返回宽松 stub：模型常写「不需要的 require 导入」（G0 诊断 4 集 `require is not defined`，
+    // 与 prompt_style 相关）——未使用的 require 自然通过；真依赖外部库行为的代码会断言失败（不放水）。
+    vm.runInContext(
+      "var module = { exports: {} }; var exports = module.exports;\n"
+      + "var require = function (name) { return new Proxy({}, { get: function () { return function () { return undefined; } }, apply: function () { return undefined; } }); };",
+      context,
+    )
     // 阶段 1：执行模型代码
     vm.runInContext(code, context, { timeout: 2000 })
     // 阶段 2：把 module.exports 绑定为全局（模型按 CommonJS 习惯导出时的兼容层）

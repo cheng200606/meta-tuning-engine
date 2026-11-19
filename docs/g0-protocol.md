@@ -2,7 +2,7 @@
 
 | 项 | 值 |
 |---|---|
-| 版本 | v1.0 |
+| 版本 | v1.1（2026-11-14 偏离单 DEV-01，见第 11 节；v1.0 原文见 git 历史 df84e47^:docs/g0-protocol.md） |
 | 制定日期 | 2026-11-10 |
 | 状态 | **已冻结**（组长 2026-11-10 签字；生效前不得运行任何 G0 episode 的限制已解除，按第 4 节流程执行） |
 | 任务清单 | tasks/g0/tasks.manifest.json |
@@ -110,3 +110,32 @@ G0 是项目生死门：H1+H2 成立才进入 M2（插件开发）；否则按�
 ## 10. 冻结前变更记录
 
 - 2026-11-10：第三基座 llama-3.3-70b → glm-4.5-air。原因：硅基流动已下线 Llama 全系（探测返回 Model disabled，且平台模型列表无 Llama）；选智谱 GLM-4.5-Air 保持三厂商多样性。发生于冻结签字前，无已产生数据，无需重跑。三基座连通与可用性实测全部通过（docs/spike/availability-probe-report.json）。
+---
+
+## 11. 版本 v1.1（2026-11-19，偏离单 DEV-01 生效）
+
+> 本节为协议 §8 偏离流程的正式记录：偏离单 docs/m3-deviation-01-judger-robustness.md，
+> 触发依据 docs/g0-measurement-audit.md（v1.0 数据的判定语义效度审计）。
+> 组长批准方式：口头指示「继续完成任务，推进到下一个阶段」（2026-11-19 会话内，待补签）。
+
+**偏离内容（唯一改动点：判定的「匹配方式」，不改变任何任务指令、expected 语义与冻结参数）**：
+
+1. 答案判定从「字符串严格相等」改为「语义等价匹配」：新增 packages/runner/src/answer-normalize.ts
+   （剥离 markdown/代码围栏、全角→半角、去千分位、收敛空白）+ checker-types 的
+   answerYesNo（取最后一个独立判定词元，兼容中文 是/否，排除「是否/不是/否则」）/
+   answerNumber（任一数字命中）/ answerIncludesAny；受影响判定器：g0-reas-02（answerYesNo）、
+   g0-tool-04（answerNumber 37）、g0-reas-01（answerIncludesAny）。
+2. run_js 增加 CommonJS 垫片：支持 module.exports = fn（命名/匿名）、module.exports = {fn}、
+   exports.fn =；语义错误的导出仍判失败。动机：31 集 `module is not defined` 与 prompt_style
+   强相关（glm concise 配置假象率 0.00 vs step_by_step 0.13–0.17）。
+3. EpisodeRecord 新增可选字段 final_answer（模型最终回答原文），便于审计复核判定。
+
+**不变**：任务清单（sha256 43059cb4…1004）、12 条指令与 expected 语义、冻结参数全表、C1/C2 阈值与决策规则。
+
+**数据处置**：v1.0 数据（experiments/2026-11-10-m1-g0-full）保留为审计证据，**全部作废**（不参与判据计算）；
+重跑产物写新目录。重测两阶段（诊断 162 episode ≈¥13 → 全量 648 episode ≈¥51），预算已获批准。
+
+**预期与判读**：修复后重算预期 delta 落在 0.000–0.028（低于 C2 阈值 0.03）；C1 预计仍通过。
+若重跑确认，项目主张改为「配置敏感性成立（qwen/deepseek 证据干净），跨基座差异化不成立」。
+
+版本：v1.1-已冻结（本节签署视为生效）。组长签字：＿＿＿＿＿（口头批准 2026-11-19，待补签）

@@ -1,0 +1,38 @@
+{
+  "stage": "A-diagnostic",
+  "date": "2026-11-19T16:36:53.739Z",
+  "episodes": 162,
+  "infraFailures": [
+    {
+      "task": "g0-code-01",
+      "base": "qwen3-8b",
+      "config": "step_by_step-p3-roff",
+      "seed": 0,
+      "reason": "infra: HTTP 429 after 4 attempts"
+    }
+  ],
+  "hypotheses": {
+    "H-A1 strict-yes-match failures (v1.0: 18)": {
+      "n": 0,
+      "count": 0
+    },
+    "H-A2 module-is-not-defined (v1.0: 31 across all 12 tasks; here only code-01/02 relevant)": {
+      "n": 0,
+      "count": 0
+    },
+    "H-A2b any vm error": {
+      "n": 4,
+      "count": 4
+    },
+    "empty answers (real failures, expect to persist)": {
+      "n": 0,
+      "count": 0
+    }
+  },
+  "passRate": {
+    "g0-reas-02": 0.6667,
+    "g0-code-01": 0.5094,
+    "g0-code-02": 0.7963
+  },
+  "tokens": 1063315
+}

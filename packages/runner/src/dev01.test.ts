@@ -90,4 +90,17 @@ describe('runJsAssertions — CommonJS 垫片', () => {
     expect(r.pass).toBe(false)
     expect(r.reason).toContain('vm error')
   })
+
+  it('require 垫片：不需要的 require 导入不再报 ReferenceError', () => {
+    const code = "const _ = require('lodash');\nmodule.exports = function twoSum(nums, target){for(let i=0;i<nums.length;i++)for(let j=i+1;j<nums.length;j++)if(nums[i]+nums[j]===target)return [i,j];return []};"
+    const r = runJsAssertions(code, assertions)
+    expect(r.pass).toBe(true)
+    expect(r.reason).not.toContain('require')
+  })
+
+  it('require 垫片：真依赖外部库行为的代码自然失败（不放水）', () => {
+    const code = "const lodash = require('lodash');\nmodule.exports = function twoSum(nums, target){return lodash.chunk([nums[0],nums[1]],2).length > 0 ? [0,0] : [0,0]};"
+    const r = runJsAssertions(code, assertions)
+    expect(r.pass).toBe(false)
+  })
 })
